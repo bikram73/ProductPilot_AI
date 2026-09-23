@@ -47,15 +47,15 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
           <button
             onClick={() => onNavigate('compare')}
-            className={`font-medium transition-colors text-base py-1 relative ${
+            className={`font-medium transition-colors text-base py-1 relative flex items-center gap-1.5 cursor-pointer ${
               currentPage === 'compare'
                 ? 'text-[#006b2c] border-b-2 border-[#006b2c] font-semibold'
                 : 'text-[#3e4a3d] hover:text-[#006b2c]'
             }`}
           >
-            Compare
+            <span>Compare</span>
             {selectedCompareCount > 0 && (
-              <span className="ml-1.5 px-1.5 py-0.2 text-xs bg-[#006b2c] text-white rounded-full font-bold">
+              <span className="px-2 py-0.5 text-xs bg-[#006b2c] text-white rounded-full font-bold shadow-xs">
                 {selectedCompareCount}
               </span>
             )}
@@ -107,9 +107,16 @@ export const Navbar: React.FC<NavbarProps> = ({
         </button>
         <button
           onClick={() => onNavigate('compare')}
-          className={`px-3 py-1 rounded-lg ${currentPage === 'compare' ? 'text-[#006b2c] font-bold bg-[#6bff8f]/30' : ''}`}
+          className={`px-3 py-1 rounded-lg flex items-center gap-1 cursor-pointer ${
+            currentPage === 'compare' ? 'text-[#006b2c] font-bold bg-[#6bff8f]/30' : ''
+          }`}
         >
-          Compare
+          <span>Compare</span>
+          {selectedCompareCount > 0 && (
+            <span className="px-1.5 py-0.2 text-[10px] bg-[#006b2c] text-white rounded-full font-bold">
+              {selectedCompareCount}
+            </span>
+          )}
         </button>
         <button
           onClick={() => onNavigate('product-detail')}

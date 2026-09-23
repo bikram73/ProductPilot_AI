@@ -42,15 +42,9 @@ export default function App() {
         showToast(`Removed "${prodName}" from comparison.`);
         return prev.filter((id) => id !== productId);
       } else {
-        if (prev.length >= 4) {
-          // Replace the oldest product so button ALWAYS works without blocking
-          const updated = [...prev.slice(1), productId];
-          showToast(`Added "${prodName}" to comparison (swapped oldest item).`);
-          return updated;
-        } else {
-          showToast(`Added "${prodName}" to comparison (${prev.length + 1}/4 items).`);
-          return [...prev, productId];
-        }
+        const updated = [...prev, productId];
+        showToast(`Added "${prodName}" to comparison place (${updated.length} items ready).`);
+        return updated;
       }
     });
   };
@@ -160,7 +154,7 @@ export default function App() {
             <span className="material-symbols-outlined text-[#7ffc97] text-lg">equalizer</span>
             <div className="hidden sm:block">
               <p className="text-[11px] font-extrabold text-[#7ffc97] uppercase tracking-wider">Compare Matrix</p>
-              <p className="text-[10px] text-slate-400">{selectedCompareIds.length} of 4 items picked</p>
+              <p className="text-[10px] text-slate-400">{selectedCompareIds.length} items added</p>
             </div>
           </div>
 

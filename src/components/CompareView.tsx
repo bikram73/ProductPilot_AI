@@ -68,7 +68,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
             className="px-4 py-2.5 bg-[#006b2c] hover:bg-[#00873a] text-white font-bold text-xs rounded-xl shadow-md shadow-[#006b2c]/20 flex items-center gap-2 transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
-            <span>Add Product ({selectedCompareIds.length}/4)</span>
+            <span>Add Product ({selectedCompareIds.length} in Matrix)</span>
           </button>
         </div>
       </div>
@@ -89,7 +89,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                   Add Product to Comparison Matrix
                 </h3>
                 <p className="text-xs text-[#3e4a3d]">
-                  Select from any product in the catalog ({selectedCompareIds.length} of 4 currently picked)
+                  Select from any product in the catalog ({selectedCompareIds.length} products currently in matrix)
                 </p>
               </div>
               <button
@@ -304,19 +304,17 @@ export const CompareView: React.FC<CompareViewProps> = ({
                       </th>
                     ))}
 
-                    {/* Placeholder Column if less than 4 products */}
-                    {compareProducts.length < 4 && (
-                      <th className="p-5 min-w-[220px] align-middle">
-                        <button
-                          onClick={() => setShowPickerModal(true)}
-                          className="w-full h-full min-h-[260px] border-2 border-dashed border-[#bdcaba] hover:border-[#006b2c] rounded-2xl flex flex-col items-center justify-center gap-2 p-6 text-slate-500 hover:text-[#006b2c] transition-all bg-slate-50/50 hover:bg-emerald-50/30 cursor-pointer"
-                        >
-                          <span className="material-symbols-outlined text-3xl">add_circle</span>
-                          <span className="text-xs font-bold">Add Another Product</span>
-                          <span className="text-[10px] text-slate-400">({4 - compareProducts.length} slots free)</span>
-                        </button>
-                      </th>
-                    )}
+                    {/* Placeholder Column to add more products */}
+                    <th className="p-5 min-w-[220px] align-middle">
+                      <button
+                        onClick={() => setShowPickerModal(true)}
+                        className="w-full h-full min-h-[260px] border-2 border-dashed border-[#bdcaba] hover:border-[#006b2c] rounded-2xl flex flex-col items-center justify-center gap-2 p-6 text-slate-500 hover:text-[#006b2c] transition-all bg-slate-50/50 hover:bg-emerald-50/30 cursor-pointer"
+                      >
+                        <span className="material-symbols-outlined text-3xl">add_circle</span>
+                        <span className="text-xs font-bold">Add Another Product</span>
+                        <span className="text-[10px] text-slate-400">Click to browse & add to matrix</span>
+                      </button>
+                    </th>
                   </tr>
                 </thead>
 
@@ -340,7 +338,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         </div>
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* User Rating */}
@@ -357,7 +355,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         </div>
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Category */}
@@ -370,7 +368,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         {product.category}
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Processor / Sensor */}
@@ -383,7 +381,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         {product.specs['Processor'] || product.specs['Sensor'] || product.specs['Driver Size'] || 'High Performance Architecture'}
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Memory / Battery */}
@@ -396,7 +394,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         {product.specs['Memory'] || product.specs['Battery Life'] || product.specs['Battery'] || 'Standard Runtime'}
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Display / Audio */}
@@ -409,7 +407,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         {product.specs['Display'] || product.specs['ANC Tech'] || product.specs['Frequency Response'] || 'Pro Grade Calibrated'}
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Weight */}
@@ -422,7 +420,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         {product.specs['Weight'] || 'Ultra Portable'}
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Key Pros */}
@@ -442,7 +440,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         </ul>
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                   {/* Key Cons */}
@@ -462,7 +460,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                         </ul>
                       </td>
                     ))}
-                    {compareProducts.length < 4 && <td />}
+                    <td className="bg-slate-50/20" />
                   </tr>
 
                 </tbody>
