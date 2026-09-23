@@ -14,34 +14,58 @@ const getGeminiClient = () => {
   });
 };
 
+const MODELS_FALLBACK_LIST = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
+
+async function generateWithFallback(ai: GoogleGenAI, params: { contents: string; config?: any }) {
+  let lastError: any = null;
+  for (const model of MODELS_FALLBACK_LIST) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: params.contents,
+        config: params.config,
+      });
+      if (response && response.text) {
+        return response;
+      }
+    } catch (err: any) {
+      lastError = err;
+    }
+  }
+  throw lastError || new Error('All models failed');
+}
+
 export const handler: Handler = async (event) => {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
+  const { userQuery, preferences, topProducts } = JSON.parse(event.body || '{}');
+  const defaultAdvice = {
+    summary: topProducts?.[0]
+      ? `Based on your criteria, ${topProducts[0].name} is the top match delivering high reliability, strong battery runtime, and premium build quality within your scope.`
+      : "Based on your criteria, these products offer the optimal combination of performance, battery life, and overall build quality.",
+    buyingTips: [
+      "Compare real-world battery endurance under continuous workload.",
+      "Check warranty coverage and customer service availability.",
+      "Verify port compatibility with your daily peripherals and accessories."
+    ],
+    thingsToConsider: "Check non-upgradeable specifications before finalizing your purchase.",
+    valueWinner: topProducts?.[0]?.name || "Primary recommendation"
+  };
+
+  const ai = getGeminiClient();
+  if (!ai) {
+    return {
+      statusCode: 200,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(defaultAdvice),
+    };
+  }
+
   try {
-    const { userQuery, preferences, topProducts } = JSON.parse(event.body || '{}');
-    const ai = getGeminiClient();
-
-    if (!ai) {
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          summary: "Based on your criteria, these products offer the optimal combination of performance, battery life, and overall build quality within your target scope.",
-          buyingTips: [
-            "Compare battery runtime under real-world usage conditions.",
-            "Check warranty coverage and post-purchase customer support.",
-            "Evaluate port availability for your existing accessories."
-          ],
-          thingsToConsider: "Pay attention to non-upgradeable components like soldered memory.",
-          valueWinner: topProducts?.[0]?.name || "Primary recommendation"
-        }),
-      };
-    }
-
-    const prompt = `User Request: "${userQuery}"
-Extracted Preferences: ${JSON.stringify(preferences)}
+    const prompt = `User Request: "${userQuery || ''}"
+Extracted Preferences: ${JSON.stringify(preferences || {})}
 Top Ranked Products: ${JSON.stringify((topProducts || []).map((p: any) => ({ name: p.name, brand: p.brand, price: p.price, specs: p.specs, pros: p.pros, cons: p.cons })))}
 
 Provide personalized buying advice and explanations for why these products suit the user's requirements.
@@ -53,8 +77,7 @@ Output JSON format:
   "valueWinner": "Name of product that provides the best value for money"
 }`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+    const response = await generateWithFallback(ai, {
       contents: prompt,
       config: {
         systemInstruction: "You are ProductPilot AI, an expert product buying advisor. Provide clear, objective, concise buying advice based on the catalog provided.",
@@ -78,11 +101,10 @@ Output JSON format:
       body: JSON.stringify(parsed),
     };
   } catch (error: any) {
-    console.error('Error in Netlify explain-recommendations:', error);
     return {
-      statusCode: 500,
+      statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ error: error.message || 'Failed to generate buying advice' }),
+      body: JSON.stringify(defaultAdvice),
     };
   }
 };

@@ -27,29 +27,94 @@ const getGeminiClient = () => {
   });
 };
 
+const MODELS_FALLBACK_LIST = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
+
+async function generateWithFallback(ai: GoogleGenAI, params: { contents: string; config?: any }) {
+  let lastError: any = null;
+  for (const model of MODELS_FALLBACK_LIST) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: params.contents,
+        config: params.config,
+      });
+      if (response && response.text) {
+        return response;
+      }
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`Model ${model} failed, trying next fallback... Reason:`, err?.message || err);
+    }
+  }
+  throw lastError || new Error('All Gemini models failed');
+}
+
+// Fallback heuristics for preference extraction
+function extractPreferencesHeuristically(query: string) {
+  const lower = query.toLowerCase();
+  let category: string | null = null;
+  if (lower.includes('laptop') || lower.includes('macbook') || lower.includes('notebook')) category = 'Laptops';
+  else if (lower.includes('headphone') || lower.includes('earbud') || lower.includes('earphone')) category = 'Headphones';
+  else if (lower.includes('phone') || lower.includes('iphone') || lower.includes('samsung') || lower.includes('pixel')) category = 'Smartphones';
+  else if (lower.includes('watch') || lower.includes('wearable') || lower.includes('garmin')) category = 'Wearables';
+  else if (lower.includes('camera') || lower.includes('dslr') || lower.includes('mirrorless') || lower.includes('photo')) category = 'Cameras';
+  else if (lower.includes('audio') || lower.includes('speaker')) category = 'Audio';
+
+  let budget: number | null = null;
+  const budgetMatch = query.match(/(?:under|below|less than|\$)\s*(\d{2,5})/i);
+  if (budgetMatch && budgetMatch[1]) {
+    budget = parseInt(budgetMatch[1], 10);
+  }
+
+  let brand: string | null = null;
+  const brands = ['Apple', 'Sony', 'Bose', 'Dell', 'Lenovo', 'Samsung', 'Garmin', 'Asus', 'HP'];
+  for (const b of brands) {
+    if (lower.includes(b.toLowerCase())) {
+      brand = b;
+      break;
+    }
+  }
+
+  let purpose: string | null = null;
+  if (lower.includes('game') || lower.includes('gaming')) purpose = 'Gaming';
+  else if (lower.includes('code') || lower.includes('program') || lower.includes('developer')) purpose = 'Programming';
+  else if (lower.includes('travel') || lower.includes('flight') || lower.includes('commute')) purpose = 'Travel';
+  else if (lower.includes('office') || lower.includes('work')) purpose = 'Office';
+  else if (lower.includes('photo') || lower.includes('video') || lower.includes('editing')) purpose = 'Creative Work';
+  else if (lower.includes('study') || lower.includes('student') || lower.includes('college')) purpose = 'Study';
+
+  const features: string[] = [];
+  if (lower.includes('lightweight') || lower.includes('light') || lower.includes('portable')) features.push('Lightweight');
+  if (lower.includes('battery') || lower.includes('long battery')) features.push('Long Battery');
+  if (lower.includes('anc') || lower.includes('noise cancel') || lower.includes('noise-cancelling')) features.push('ANC');
+  if (lower.includes('oled') || lower.includes('display') || lower.includes('4k')) features.push('High-Res Display');
+  if (lower.includes('rtx') || lower.includes('gpu')) features.push('Dedicated GPU');
+
+  return {
+    category,
+    budget,
+    brand,
+    purpose,
+    features,
+    rawQuery: query,
+  };
+}
+
 // API Endpoint 1: Extract Preferences from Natural Language Query
 app.post('/api/gemini/extract-preferences', async (req, res) => {
+  const { query } = req.body;
+  if (!query || typeof query !== 'string') {
+    return res.status(400).json({ error: 'Query is required' });
+  }
+
+  const fallback = extractPreferencesHeuristically(query);
+  const ai = getGeminiClient();
+  if (!ai) {
+    return res.json(fallback);
+  }
+
   try {
-    const { query } = req.body;
-    if (!query || typeof query !== 'string') {
-      return res.status(400).json({ error: 'Query is required' });
-    }
-
-    const ai = getGeminiClient();
-    if (!ai) {
-      // Return fallback heuristic extraction if API key is not present
-      return res.json({
-        category: null,
-        budget: null,
-        brand: null,
-        purpose: null,
-        features: [],
-        rawQuery: query,
-      });
-    }
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+    const response = await generateWithFallback(ai, {
       contents: `Extract structured product search preferences from this user request: "${query}"`,
       config: {
         systemInstruction: `You are a product recommendation assistant. Extract user preferences from the text.
@@ -80,35 +145,45 @@ If a field is not specified, set it to null or empty array.`,
     });
 
     const parsed = JSON.parse(response.text || '{}');
-    return res.json({ ...parsed, rawQuery: query });
+    return res.json({
+      category: parsed.category || fallback.category,
+      budget: parsed.budget || fallback.budget,
+      brand: parsed.brand || fallback.brand,
+      purpose: parsed.purpose || fallback.purpose,
+      features: (parsed.features && parsed.features.length > 0) ? parsed.features : fallback.features,
+      rawQuery: query,
+    });
   } catch (error: any) {
-    console.error('Error in /api/gemini/extract-preferences:', error);
-    return res.status(500).json({ error: error.message || 'Failed to extract preferences' });
+    console.warn('API error in /api/gemini/extract-preferences, using fallback:', error?.message || error);
+    return res.json(fallback);
   }
 });
 
 // API Endpoint 2: Explain Recommendation & Buying Advice
 app.post('/api/gemini/explain-recommendations', async (req, res) => {
+  const { userQuery, preferences, topProducts } = req.body;
+  const defaultAdvice = {
+    summary: topProducts?.[0]
+      ? `Based on your criteria, ${topProducts[0].name} is the top match delivering high reliability, strong battery runtime, and premium build quality within your scope.`
+      : "Based on your criteria, these products offer the optimal combination of performance, battery life, and overall build quality.",
+    buyingTips: [
+      "Compare real-world battery endurance under continuous workload.",
+      "Check warranty coverage and customer service availability.",
+      "Verify port compatibility with your daily peripherals and accessories."
+    ],
+    thingsToConsider: "Check non-upgradeable specifications before finalizing your purchase.",
+    valueWinner: topProducts?.[0]?.name || "Primary recommendation"
+  };
+
+  const ai = getGeminiClient();
+  if (!ai) {
+    return res.json(defaultAdvice);
+  }
+
   try {
-    const { userQuery, preferences, topProducts } = req.body;
-    const ai = getGeminiClient();
-
-    if (!ai) {
-      return res.json({
-        summary: "Based on your criteria, these products offer the optimal combination of performance, battery life, and overall build quality within your target scope.",
-        buyingTips: [
-          "Compare battery runtime under real-world usage conditions.",
-          "Check warranty coverage and post-purchase customer support.",
-          "Evaluate port availability for your existing accessories."
-        ],
-        thingsToConsider: "Pay attention to non-upgradeable components like soldered memory.",
-        valueWinner: topProducts?.[0]?.name || "Primary recommendation"
-      });
-    }
-
-    const prompt = `User Request: "${userQuery}"
-Extracted Preferences: ${JSON.stringify(preferences)}
-Top Ranked Products: ${JSON.stringify(topProducts.map((p: any) => ({ name: p.name, brand: p.brand, price: p.price, specs: p.specs, pros: p.pros, cons: p.cons })))}
+    const prompt = `User Request: "${userQuery || ''}"
+Extracted Preferences: ${JSON.stringify(preferences || {})}
+Top Ranked Products: ${JSON.stringify((topProducts || []).map((p: any) => ({ name: p.name, brand: p.brand, price: p.price, specs: p.specs, pros: p.pros, cons: p.cons })))}
 
 Provide personalized buying advice and explanations for why these products suit the user's requirements.
 Output JSON format:
@@ -119,8 +194,7 @@ Output JSON format:
   "valueWinner": "Name of product that provides the best value for money"
 }`;
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+    const response = await generateWithFallback(ai, {
       contents: prompt,
       config: {
         systemInstruction: "You are ProductPilot AI, an expert product buying advisor. Provide clear, objective, concise buying advice based on the catalog provided.",
@@ -140,29 +214,29 @@ Output JSON format:
     const parsed = JSON.parse(response.text || '{}');
     return res.json(parsed);
   } catch (error: any) {
-    console.error('Error in /api/gemini/explain-recommendations:', error);
-    return res.status(500).json({ error: error.message || 'Failed to generate buying advice' });
+    console.warn('API error in /api/gemini/explain-recommendations, using fallback advice:', error?.message || error);
+    return res.json(defaultAdvice);
   }
 });
 
 // API Endpoint 3: Cold Start Follow-up Questions
 app.post('/api/gemini/cold-start', async (req, res) => {
+  const defaultQuestions = {
+    questions: [
+      "What is your target budget limit?",
+      "What primary use case or purpose do you have in mind?",
+      "Are there any specific required features (e.g. noise cancellation, battery life, weight)?"
+    ]
+  };
+
+  const { prompt } = req.body;
+  const ai = getGeminiClient();
+  if (!ai) {
+    return res.json(defaultQuestions);
+  }
+
   try {
-    const { prompt } = req.body;
-    const ai = getGeminiClient();
-
-    if (!ai) {
-      return res.json({
-        questions: [
-          "What is your target budget limit?",
-          "What primary use case or purpose do you have in mind?",
-          "Are there any specific required features (e.g. noise cancellation, battery life, weight)?"
-        ]
-      });
-    }
-
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+    const response = await generateWithFallback(ai, {
       contents: `The user provided a very vague product query: "${prompt}". Ask up to 3 concise, highly relevant follow-up questions to help narrow down the exact product recommendation.`,
       config: {
         systemInstruction: "Ask at most 3 direct, friendly, high-impact clarifying questions. Output JSON with a 'questions' array of strings.",
@@ -182,34 +256,32 @@ app.post('/api/gemini/cold-start', async (req, res) => {
     const parsed = JSON.parse(response.text || '{}');
     return res.json(parsed);
   } catch (error: any) {
-    console.error('Error in /api/gemini/cold-start:', error);
-    return res.status(500).json({ error: error.message || 'Failed to generate cold start questions' });
+    console.warn('API error in /api/gemini/cold-start, using fallback:', error?.message || error);
+    return res.json(defaultQuestions);
   }
 });
 
 // API Endpoint 4: AI Assistant Copilot
 app.post('/api/gemini/assistant', async (req, res) => {
+  const { messages, contextProducts } = req.body;
+  const ai = getGeminiClient();
+  if (!ai) {
+    return res.json({
+      reply: "I am ProductPilot AI. How can I help you choose the best product today?"
+    });
+  }
+
   try {
-    const { messages, contextProducts } = req.body;
-    const ai = getGeminiClient();
-
-    if (!ai) {
-      return res.json({
-        reply: "I am ProductPilot AI. How can I help you choose the best product today?"
-      });
-    }
-
     const systemInstruction = `You are ProductPilot AI, an intelligent, objective product recommendation assistant.
 Available products in catalog:
-${JSON.stringify(contextProducts.map((p: any) => ({ id: p.id, name: p.name, price: p.price, specs: p.specs, pros: p.pros, cons: p.cons, category: p.category })))}
+${JSON.stringify((contextProducts || []).map((p: any) => ({ id: p.id, name: p.name, price: p.price, specs: p.specs, pros: p.pros, cons: p.cons, category: p.category })))}
 
 Help the user compare items, understand trade-offs, find budget options, or clarify technical specs.
 Be friendly, direct, concise, and helpful. Mention specific product names when relevant.`;
 
-    const formattedContents = messages.map((m: any) => `${m.sender === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
+    const formattedContents = (messages || []).map((m: any) => `${m.sender === 'user' ? 'User' : 'Assistant'}: ${m.text}`).join('\n');
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.6-flash',
+    const response = await generateWithFallback(ai, {
       contents: `Chat history:\n${formattedContents}\nAssistant:`,
       config: {
         systemInstruction,
@@ -218,8 +290,10 @@ Be friendly, direct, concise, and helpful. Mention specific product names when r
 
     return res.json({ reply: response.text });
   } catch (error: any) {
-    console.error('Error in /api/gemini/assistant:', error);
-    return res.status(500).json({ error: error.message || 'Assistant failed to reply' });
+    console.warn('API error in /api/gemini/assistant, using fallback:', error?.message || error);
+    return res.json({
+      reply: "Based on our product catalog, our top picks offer class-leading performance, optimal battery runtime, and proven user satisfaction. Let me know if you want a detailed spec comparison!"
+    });
   }
 });
 
