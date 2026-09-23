@@ -521,20 +521,25 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         onSelectProduct(product.id);
                         onNavigate('product-detail');
                       }}
-                      className="py-3 px-4 border border-[#6e7b6c] rounded-xl text-xs font-bold text-[#191c1e] hover:bg-[#eceef0] transition-colors"
+                      className="py-3 px-4 border border-[#6e7b6c] rounded-xl text-xs font-bold text-[#191c1e] hover:bg-[#eceef0] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
                     >
-                      Details
+                      <span className="material-symbols-outlined text-[16px]">visibility</span>
+                      <span>Details</span>
                     </button>
 
                     <button
                       onClick={() => onToggleCompare(product.id)}
-                      className={`py-3 px-4 rounded-xl text-xs font-bold transition-all ${
+                      className={`py-3 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isCompared
-                          ? 'bg-[#00873a] text-white'
-                          : 'bg-[#006b2c] text-white hover:opacity-90'
+                          ? 'bg-[#00873a] text-white shadow-md shadow-[#00873a]/20'
+                          : 'bg-[#006b2c] text-white hover:bg-[#00873a] shadow-sm'
                       }`}
+                      title={isCompared ? 'Remove from comparison' : 'Add to comparison matrix'}
                     >
-                      {isCompared ? 'Compared ✓' : '+ Compare'}
+                      <span className="material-symbols-outlined text-[16px]">
+                        {isCompared ? 'check_circle' : 'add_circle'}
+                      </span>
+                      <span>{isCompared ? 'In Compare ✓' : '+ Compare'}</span>
                     </button>
                   </div>
                 </div>
@@ -554,41 +559,40 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               </p>
             </div>
           </div>
+
+          {/* INLINE WORKSPACE SUMMARY & ACTIONS */}
+          <div className="glass-card bg-[#f2f4f6]/90 rounded-2xl p-5 border border-[#006b2c]/20 flex flex-col sm:flex-row items-center justify-between gap-4 mt-8">
+            <div className="flex items-center gap-4 sm:gap-6">
+              <div className="flex flex-col">
+                <span className="text-[10px] text-[#3e4a3d] uppercase font-bold">Average Match</span>
+                <span className="text-lg font-bold text-[#006b2c]">95.4%</span>
+              </div>
+              <div className="w-[1px] h-8 bg-[#bdcaba]/40 hidden sm:block" />
+              <div className="flex flex-col">
+                <span className="text-[10px] text-[#3e4a3d] uppercase font-bold">Selected to Compare</span>
+                <span className="text-sm font-bold text-[#191c1e]">{selectedCompareIds.length} of 4 items</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <button
+                onClick={handleSavePath}
+                className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#eceef0] hover:bg-[#e0e3e5] text-[#191c1e] rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-sm">bookmark</span>
+                <span>Save Search Path</span>
+              </button>
+              <button
+                onClick={() => onNavigate('compare')}
+                className="flex-1 sm:flex-initial px-6 py-2.5 bg-[#006b2c] hover:bg-[#00873a] text-white rounded-xl text-xs font-bold transition-all shadow-md shadow-[#006b2c]/20 cursor-pointer flex items-center justify-center gap-1.5"
+              >
+                <span className="material-symbols-outlined text-sm">equalizer</span>
+                <span>Open Matrix ({selectedCompareIds.length})</span>
+              </button>
+            </div>
+          </div>
         </section>
       </div>
-
-      {/* STICKY SUMMARY (BOTTOM FLOATING) */}
-      <div className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[92%] max-w-4xl z-40">
-        <div className="glass-card bg-[#f2f4f6]/95 backdrop-blur-2xl rounded-full px-6 sm:px-8 py-3.5 shadow-2xl flex items-center justify-between border border-[#006b2c]/20">
-          <div className="flex items-center gap-4 sm:gap-6">
-            <div className="flex flex-col">
-              <span className="text-[10px] text-[#3e4a3d] uppercase font-bold">Average Match</span>
-              <span className="text-lg font-bold text-[#006b2c]">94.2%</span>
-            </div>
-            <div className="w-[1px] h-8 bg-[#bdcaba]/40 hidden sm:block" />
-            <div className="hidden md:flex flex-col">
-              <span className="text-[10px] text-[#3e4a3d] uppercase font-bold">Best Value</span>
-              <span className="text-xs font-bold text-[#191c1e]">Bose QC45 ($189)</span>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            <button
-              onClick={handleSavePath}
-              className="px-6 sm:px-8 py-2.5 sm:py-3 bg-[#006b2c] text-white rounded-full text-xs sm:text-sm font-bold hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#006b2c]/20"
-            >
-              Save Path
-            </button>
-            <button
-              onClick={() => onNavigate('compare')}
-              className="px-4 py-2.5 bg-[#00873a] text-white rounded-full text-xs font-bold hover:opacity-90 transition-opacity hidden sm:block"
-            >
-              Compare Matrix ({selectedCompareIds.length})
-            </button>
-          </div>
-        </div>
-      </div>
-
     </div>
   );
 };
