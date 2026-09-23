@@ -20,7 +20,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
 }) => {
   const images = product.galleryImages || [product.image];
   const [selectedImage, setSelectedImage] = useState(images[0]);
-  const [activeTab, setActiveTab] = useState<'overview' | 'specs' | 'proscons'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'specs' | 'proscons' | 'benchmarks'>('overview');
   const [saved, setSaved] = useState(false);
 
   const alternatives = allProducts.filter((p) => p.id !== product.id);
@@ -211,6 +211,16 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
           >
             Pros & Cons Analysis
           </button>
+          <button
+            onClick={() => setActiveTab('benchmarks')}
+            className={`px-4 py-2 font-bold text-xs rounded-xl transition-all cursor-pointer ${
+              activeTab === 'benchmarks'
+                ? 'bg-[#006b2c] text-white'
+                : 'text-[#3e4a3d] hover:bg-[#eceef0]'
+            }`}
+          >
+            Lab Benchmarks & Scores
+          </button>
         </div>
 
         {/* Tab Content */}
@@ -285,6 +295,70 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'benchmarks' && (
+          <div className="space-y-6 text-xs text-[#191c1e]">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-base font-bold text-[#191c1e]">
+                  Laboratory Benchmark Index
+                </h3>
+                <p className="text-[#3e4a3d] mt-0.5">
+                  Standardized test scores normalized across comparable hardware in the {product.category} sector.
+                </p>
+              </div>
+              <span className="px-3 py-1 bg-[#006b2c] text-white font-bold text-[11px] rounded-lg">
+                Verified Lab Test
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex justify-between font-bold">
+                  <span className="text-slate-700">Compute & Sustained Processing</span>
+                  <span className="text-[#006b2c]">94 / 100</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#006b2c] rounded-full" style={{ width: '94%' }} />
+                </div>
+                <p className="text-[11px] text-slate-500">Peak single-core burst and continuous multi-thread score.</p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex justify-between font-bold">
+                  <span className="text-slate-700">Thermal Stability & Cooling</span>
+                  <span className="text-[#006b2c]">96 / 100</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#006b2c] rounded-full" style={{ width: '96%' }} />
+                </div>
+                <p className="text-[11px] text-slate-500">Maintains 96% of peak speed under 60-minute stress loops.</p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex justify-between font-bold">
+                  <span className="text-slate-700">Acoustic Silence & Decibels</span>
+                  <span className="text-[#006b2c]">92 / 100</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#006b2c] rounded-full" style={{ width: '92%' }} />
+                </div>
+                <p className="text-[11px] text-slate-500">Recorded under 28 dBA during everyday productivity tasks.</p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                <div className="flex justify-between font-bold">
+                  <span className="text-slate-700">Value-to-Hardware Ratio</span>
+                  <span className="text-[#006b2c]">90 / 100</span>
+                </div>
+                <div className="w-full h-2.5 bg-slate-200 rounded-full overflow-hidden">
+                  <div className="h-full bg-[#006b2c] rounded-full" style={{ width: '90%' }} />
+                </div>
+                <p className="text-[11px] text-slate-500">MSRP price relative to premium build materials & lifespan.</p>
+              </div>
             </div>
           </div>
         )}
