@@ -1,0 +1,6 @@
+{
+  "name": "ProductPilot AI",
+  "description": "AI-powered product discovery, recommendation, comparison, and analysis platform with a clean emerald green and white design.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

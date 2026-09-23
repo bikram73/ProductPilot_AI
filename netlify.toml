@@ -1,0 +1,32 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[[redirects]]
+  from = "/api/gemini/extract-preferences"
+  to = "/.netlify/functions/extract-preferences"
+  status = 200
+
+[[redirects]]
+  from = "/api/gemini/explain-recommendations"
+  to = "/.netlify/functions/explain-recommendations"
+  status = 200
+
+[[redirects]]
+  from = "/api/gemini/cold-start"
+  to = "/.netlify/functions/cold-start"
+  status = 200
+
+[[redirects]]
+  from = "/api/gemini/assistant"
+  to = "/.netlify/functions/assistant"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
