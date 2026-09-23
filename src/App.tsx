@@ -154,8 +154,8 @@ export default function App() {
         )}
       </main>
 
-      {/* Sticky Floating Bottom Comparison Dock (Visible when items selected & not on compare page) */}
-      {selectedCompareIds.length > 0 && currentPage !== 'compare' && (
+      {/* Sticky Floating Bottom Comparison Dock (Visible only on the recommendations page when items are selected) */}
+      {selectedCompareIds.length > 0 && currentPage === 'recommendations' && (
         <aside
           aria-label="Comparison dock"
           className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 backdrop-blur-md text-white px-4 sm:px-6 py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-3 sm:gap-6 max-w-[95vw] sm:max-w-xl transition-all"
