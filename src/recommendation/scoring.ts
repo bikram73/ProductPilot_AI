@@ -32,6 +32,7 @@ export function calculateProductScore(product: Product, filters: FilterState, ex
   const targetCategory = extracted?.category || filters.category;
   const targetBudget = extracted?.budget || filters.maxBudget;
   const targetBrand = extracted?.brand || filters.brand;
+  const targetPurpose = extracted?.purpose || filters.purpose;
   const targetFeatures = (extracted?.features && extracted.features.length > 0)
     ? extracted.features
     : filters.selectedFeatures;
@@ -40,30 +41,38 @@ export function calculateProductScore(product: Product, filters: FilterState, ex
   let budgetScoreRatio = 1.0;
   if (targetBudget && targetBudget > 0) {
     if (product.price <= targetBudget) {
-      // Reward staying nicely within budget
       budgetScoreRatio = 1.0;
     } else {
-      // Penalty for exceeding budget
       const over = product.price - targetBudget;
       budgetScoreRatio = Math.max(0, 1 - over / (targetBudget * 0.5));
     }
   }
 
-  // 2. Feature Score (30%)
+  // 2. Feature & Purpose Score (30%)
   let featureScoreRatio = 1.0;
+  const textBlob = `${product.name} ${product.summary} ${product.aiReason} ${JSON.stringify(product.specs)} ${product.pros.join(' ')}`.toLowerCase();
+
+  let featureMatches = 0;
+  let totalCriteria = 0;
+
   if (targetFeatures && targetFeatures.length > 0) {
-    const textBlob = `${product.name} ${product.summary} ${product.aiReason} ${JSON.stringify(product.specs)} ${product.pros.join(' ')}`.toLowerCase();
-    let matchedCount = 0;
+    totalCriteria += targetFeatures.length;
     targetFeatures.forEach((feat) => {
       const featKeywords = feat.toLowerCase().split(/\s+/);
       const isMatch = featKeywords.some((kw) => kw.length > 2 && textBlob.includes(kw));
-      if (isMatch) matchedCount++;
+      if (isMatch) featureMatches++;
     });
-    featureScoreRatio = matchedCount / targetFeatures.length;
-    // Base boost if at least 1 feature matches
-    if (matchedCount > 0 && featureScoreRatio < 0.5) {
-      featureScoreRatio = 0.5;
-    }
+  }
+
+  if (targetPurpose && targetPurpose !== 'All') {
+    totalCriteria += 1;
+    const purposeKeywords = targetPurpose.toLowerCase().split(/[\s,&]+/);
+    const purposeMatched = purposeKeywords.some((kw) => kw.length > 3 && textBlob.includes(kw));
+    if (purposeMatched) featureMatches++;
+  }
+
+  if (totalCriteria > 0) {
+    featureScoreRatio = Math.max(0.5, featureMatches / totalCriteria);
   }
 
   // 3. Category Score (20%)

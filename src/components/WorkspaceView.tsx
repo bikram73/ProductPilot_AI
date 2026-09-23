@@ -98,13 +98,26 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   // Rank products dynamically using the Weighted Content-Based Filtering Algorithm
   const rankedProducts: ScoredProduct[] = useMemo(() => {
     const scored = rankProducts(products, filters, extractedIntent || undefined);
-    return scored.filter((item) => {
+    let filtered = scored.filter((item) => {
       if (item.price > filters.maxBudget) return false;
       if (filters.category !== 'All' && item.category !== filters.category) return false;
       if (filters.brand !== 'All' && item.brand !== filters.brand) return false;
       if (item.rating < filters.minRating) return false;
+      if (filters.inStockOnly && !item.inStock) return false;
       return true;
     });
+
+    if (filters.sortBy === 'price-asc') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (filters.sortBy === 'price-desc') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (filters.sortBy === 'rating-desc') {
+      filtered.sort((a, b) => b.rating - a.rating);
+    } else {
+      filtered.sort((a, b) => b.calculatedMatchScore - a.calculatedMatchScore);
+    }
+
+    return filtered;
   }, [products, filters, extractedIntent]);
 
   const lastAdviceFetchRef = React.useRef<string>('');
@@ -156,15 +169,29 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   const handleResetFilters = () => {
     setFilters({
-      maxBudget: 2000,
+      maxBudget: 2500,
       category: 'All',
       brand: 'All',
-      purpose: 'Travel & Commuting',
-      minRating: 3,
+      purpose: 'All',
+      minRating: 0,
       selectedFeatures: [],
-      searchPrompt: ''
+      searchPrompt: '',
+      sortBy: 'match',
+      inStockOnly: false
     });
     setExtractedIntent(null);
+  };
+
+  const toggleFeature = (featureName: string) => {
+    setFilters(prev => {
+      const exists = prev.selectedFeatures.includes(featureName);
+      return {
+        ...prev,
+        selectedFeatures: exists
+          ? prev.selectedFeatures.filter(f => f !== featureName)
+          : [...prev.selectedFeatures, featureName]
+      };
+    });
   };
 
   const handleApplyPrompt = () => {
@@ -176,6 +203,28 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     setSavedNotification(true);
     setTimeout(() => setSavedNotification(false), 3000);
   };
+
+  // Extract all available brands dynamically
+  const availableBrands = useMemo(() => {
+    const brandSet = new Set<string>();
+    products.forEach(p => {
+      if (p.brand) brandSet.add(p.brand);
+    });
+    return Array.from(brandSet).sort();
+  }, [products]);
+
+  const featureOptions = [
+    'Noise Cancellation (ANC)',
+    '20h+ Battery',
+    'OLED / 4K Display',
+    'Lightweight & Portable',
+    'Water Resistant (IPX7+)',
+    'Wireless Fast Charging',
+    'High-Res Audio / LDAC',
+    'Multi-Band GPS',
+    'Mechanical / Haptic Keys',
+    '40MP+ Pro Sensor'
+  ];
 
   return (
     <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-8 pb-32">
@@ -191,20 +240,97 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         
         {/* LEFT SIDEBAR: PREFERENCE FORM */}
         <aside className="w-full md:w-[320px] shrink-0">
-          <div className="glass-card rounded-2xl p-6 sticky top-28 border border-[#bdcaba]/20">
-            <h2 className="text-xl font-bold text-[#006b2c] mb-6 flex items-center gap-2">
-              <span className="material-symbols-outlined">tune</span>
-              <span>Preferences</span>
-            </h2>
+          <div className="glass-card rounded-2xl p-6 sticky top-28 border border-[#bdcaba]/20 space-y-6">
+            <div className="flex items-center justify-between border-b border-[#bdcaba]/20 pb-4">
+              <h2 className="text-lg font-bold text-[#006b2c] flex items-center gap-2">
+                <span className="material-symbols-outlined text-xl">tune</span>
+                <span>Preference Filters</span>
+              </h2>
+              <button
+                onClick={handleResetFilters}
+                className="text-xs text-[#3e4a3d] hover:text-[#006b2c] font-semibold transition-colors flex items-center gap-1 cursor-pointer"
+                title="Reset all filters"
+              >
+                <span className="material-symbols-outlined text-sm">restart_alt</span>
+                <span>Reset</span>
+              </button>
+            </div>
 
-            <div className="space-y-6">
-              {/* Budget Slider */}
-              <div>
-                <div className="flex justify-between mb-2">
-                  <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider">
-                    Budget
+            <div className="space-y-5">
+              
+              {/* Category Filter */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm text-[#006b2c]">category</span>
+                  <span>Category</span>
+                </label>
+                <select
+                  value={filters.category}
+                  onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                  className="w-full bg-white border border-[#bdcaba] rounded-xl p-2.5 text-xs font-medium focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e] cursor-pointer"
+                >
+                  <option value="All">All Categories (60+ items)</option>
+                  <option value="Laptops">Laptops & Ultrabooks</option>
+                  <option value="Headphones">Headphones & ANC Earbuds</option>
+                  <option value="Smartphones">Smartphones & Flagships</option>
+                  <option value="Wearables">Wearables & Smartwatches</option>
+                  <option value="Audio">Audio & Spatial Speakers</option>
+                  <option value="Cameras">Cameras & Creator Tech</option>
+                </select>
+              </div>
+
+              {/* Brand Filter */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm text-[#006b2c]">branding_watermark</span>
+                  <span>Preferred Brand</span>
+                </label>
+                <select
+                  value={filters.brand}
+                  onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
+                  className="w-full bg-white border border-[#bdcaba] rounded-xl p-2.5 text-xs font-medium focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e] cursor-pointer"
+                >
+                  <option value="All">All Brands ({availableBrands.length} Available)</option>
+                  {availableBrands.map((brandName) => (
+                    <option key={brandName} value={brandName}>
+                      {brandName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {/* Purpose / Workflow */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm text-[#006b2c]">work</span>
+                  <span>Primary Purpose</span>
+                </label>
+                <select
+                  value={filters.purpose}
+                  onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
+                  className="w-full bg-white border border-[#bdcaba] rounded-xl p-2.5 text-xs font-medium focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e] cursor-pointer"
+                >
+                  <option value="All">All Workflows & Use Cases</option>
+                  <option value="Travel & Commuting">Travel & Long Commuting (ANC, 20h+ Battery)</option>
+                  <option value="Software Engineering">Software Engineering & Coding (RAM, CPU)</option>
+                  <option value="Creative Production">Creative Production & 4K Video (OLED)</option>
+                  <option value="Mobility & Student">Ultra-Light Mobility & Student Life</option>
+                  <option value="Fitness & Sport">Marathon, Fitness & Sport (GPS, IPX7)</option>
+                  <option value="Studio & Audiophile">Audiophile & Studio Monitoring (Lossless)</option>
+                  <option value="Office Productivity">Remote Office & Daily Meetings</option>
+                  <option value="Street Photography">Night & Street Photography</option>
+                  <option value="Casual Listening">Casual Listening & Media</option>
+                </select>
+              </div>
+
+              {/* Budget Range Slider */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm text-[#006b2c]">payments</span>
+                    <span>Max Budget</span>
                   </label>
-                  <span className="text-xs text-[#006b2c] font-bold">
+                  <span className="text-xs text-[#006b2c] font-extrabold bg-[#6bff8f]/20 px-2 py-0.5 rounded-md">
                     ${filters.maxBudget}
                   </span>
                 </div>
@@ -217,93 +343,118 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                   onChange={(e) => setFilters({ ...filters, maxBudget: Number(e.target.value) })}
                   className="w-full h-2 bg-[#e0e3e5] rounded-lg appearance-none cursor-pointer accent-[#006b2c]"
                 />
-              </div>
-
-              {/* Category */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider">
-                  Category
-                </label>
-                <select
-                  value={filters.category}
-                  onChange={(e) => setFilters({ ...filters, category: e.target.value })}
-                  className="w-full bg-white border border-[#bdcaba] rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e]"
-                >
-                  <option value="All">All Categories</option>
-                  <option value="Laptops">Laptops</option>
-                  <option value="Headphones">Headphones</option>
-                  <option value="Smartphones">Smartphones</option>
-                  <option value="Wearables">Wearables</option>
-                  <option value="Audio">Audio & Speakers</option>
-                  <option value="Cameras">Cameras</option>
-                </select>
-              </div>
-
-              {/* Brand */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider">
-                  Preferred Brand
-                </label>
-                <select
-                  value={filters.brand}
-                  onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
-                  className="w-full bg-white border border-[#bdcaba] rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e]"
-                >
-                  <option value="All">All Brands</option>
-                  {Array.from(new Set(products.map((p) => p.brand))).sort().map((brandName) => (
-                    <option key={brandName} value={brandName}>
-                      {brandName}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Purpose */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider">
-                  Primary Purpose
-                </label>
-                <select
-                  value={filters.purpose}
-                  onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
-                  className="w-full bg-white border border-[#bdcaba] rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e]"
-                >
-                  <option value="Travel & Commuting">Travel & Commuting</option>
-                  <option value="Studio & Professional">Studio & Professional</option>
-                  <option value="Fitness & Sport">Fitness & Sport</option>
-                  <option value="Casual Listening">Casual Listening</option>
-                </select>
-              </div>
-
-              {/* Rating Filter */}
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider">
-                  Minimum Rating
-                </label>
-                <div className="flex items-center gap-2">
-                  <div className="flex-grow flex gap-1">
-                    {[1, 2, 3, 4].map((star) => (
-                      <span
-                        key={star}
-                        className="material-symbols-outlined text-[#006b2c]"
-                        style={{ fontVariationSettings: "'FILL' 1" }}
-                      >
-                        star
-                      </span>
-                    ))}
-                    <span className="material-symbols-outlined text-[#bdcaba]">star</span>
-                  </div>
-                  <span className="text-xs font-semibold text-[#3e4a3d]">4.0+</span>
+                <div className="flex justify-between text-[10px] text-[#3e4a3d]/70 font-semibold pt-0.5">
+                  <span>$50</span>
+                  <span>$1,000</span>
+                  <span>$2,500</span>
                 </div>
               </div>
 
+              {/* Key Feature Multi-Select Pills */}
+              <div className="space-y-2">
+                <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm text-[#006b2c]">check_box</span>
+                  <span>Required Features</span>
+                </label>
+                <div className="flex flex-wrap gap-1.5">
+                  {featureOptions.map((feat) => {
+                    const selected = filters.selectedFeatures.includes(feat);
+                    return (
+                      <button
+                        key={feat}
+                        type="button"
+                        onClick={() => toggleFeature(feat)}
+                        className={`text-[11px] px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                          selected
+                            ? 'bg-[#006b2c] text-white shadow-xs'
+                            : 'bg-[#eceef0] text-[#3e4a3d] hover:bg-[#e0e3e5]'
+                        }`}
+                      >
+                        {selected && <span className="material-symbols-outlined text-[12px]">check</span>}
+                        <span>{feat}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Rating Filter (Interactive) */}
+              <div className="space-y-1.5">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-sm text-[#006b2c]">grade</span>
+                    <span>Min Rating</span>
+                  </label>
+                  <span className="text-xs font-bold text-[#006b2c]">
+                    {filters.minRating > 0 ? `${filters.minRating}.0+` : 'Any Rating'}
+                  </span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {[0, 3, 4, 4.5].map((rateVal) => (
+                    <button
+                      key={rateVal}
+                      type="button"
+                      onClick={() => setFilters({ ...filters, minRating: rateVal })}
+                      className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer text-center ${
+                        filters.minRating === rateVal
+                          ? 'bg-[#006b2c] text-white'
+                          : 'bg-[#eceef0] text-[#3e4a3d] hover:bg-[#e0e3e5]'
+                      }`}
+                    >
+                      {rateVal === 0 ? 'All' : `${rateVal}★+`}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Sorting & Availability */}
+              <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#bdcaba]/20">
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Sort By
+                  </label>
+                  <select
+                    value={filters.sortBy || 'match'}
+                    onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as any })}
+                    className="w-full bg-white border border-[#bdcaba] rounded-lg p-1.5 text-xs font-medium text-[#191c1e] cursor-pointer"
+                  >
+                    <option value="match">AI Match</option>
+                    <option value="price-asc">Price: Low</option>
+                    <option value="price-desc">Price: High</option>
+                    <option value="rating-desc">Rating</option>
+                  </select>
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-[10px] font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Stock
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setFilters({ ...filters, inStockOnly: !filters.inStockOnly })}
+                    className={`w-full p-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer border flex items-center justify-center gap-1 ${
+                      filters.inStockOnly
+                        ? 'bg-[#6bff8f]/30 border-[#006b2c] text-[#006b2c]'
+                        : 'bg-white border-[#bdcaba] text-[#3e4a3d]'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-sm">
+                      {filters.inStockOnly ? 'check_circle' : 'radio_button_unchecked'}
+                    </span>
+                    <span>In Stock</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
               <button
                 onClick={handleResetFilters}
-                className="w-full py-3 bg-[#006b2c]/10 text-[#006b2c] font-bold rounded-xl hover:bg-[#006b2c] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 text-sm"
+                className="w-full py-2.5 bg-[#006b2c]/10 text-[#006b2c] font-bold rounded-xl hover:bg-[#006b2c] hover:text-white transition-all duration-300 flex items-center justify-center gap-2 text-xs cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[20px]">refresh</span>
-                <span>Reset Filters</span>
+                <span className="material-symbols-outlined text-base">refresh</span>
+                <span>Reset All Filters</span>
               </button>
+
             </div>
           </div>
         </aside>

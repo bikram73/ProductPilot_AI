@@ -54,6 +54,8 @@ export interface FilterState {
   minRating: number;
   selectedFeatures: string[];
   searchPrompt: string;
+  sortBy?: 'match' | 'price-asc' | 'price-desc' | 'rating-desc';
+  inStockOnly?: boolean;
 }
 
 export interface ChatMessage {
