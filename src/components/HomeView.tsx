@@ -148,86 +148,143 @@ export const HomeView: React.FC<HomeViewProps> = ({
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-6 gap-6 h-auto md:h-[500px]">
-          {/* Large Card - Laptops */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Card 1 - Laptops */}
           <div
             onClick={() => {
-              onSearchPrompt('High Performance Laptops');
+              onSearchPrompt('Laptops');
               onNavigate('recommendations');
             }}
-            className="md:col-span-3 md:row-span-2 group relative overflow-hidden rounded-2xl bg-[#00873a]/10 border border-[#006b2c]/10 p-8 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[260px]"
+            className="group relative overflow-hidden rounded-2xl bg-[#00873a]/10 border border-[#006b2c]/15 p-6 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[220px]"
           >
             <div className="relative z-10">
-              <span className="material-symbols-outlined text-[#006b2c] text-[48px] mb-4">
+              <span className="material-symbols-outlined text-[#006b2c] text-[36px] mb-3">
                 laptop_mac
               </span>
-              <h3 className="text-2xl font-bold mb-2 text-[#191c1e]">High Performance Laptops</h3>
-              <p className="text-[#3e4a3d] max-w-xs text-sm">
-                From ultrabooks to gaming rigs, find your perfect workstation.
+              <h3 className="text-xl font-bold mb-1 text-[#191c1e]">High-End Laptops</h3>
+              <p className="text-[#3e4a3d] text-xs">
+                M3 MacBooks, OLED workstations, and portable gaming rigs.
               </p>
             </div>
-            <div className="absolute right-[-5%] bottom-[-5%] w-1/2 h-1/2 opacity-30 group-hover:scale-110 transition-transform">
-              <img
-                src="https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=600&q=80"
-                alt="Laptops"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="mt-8 relative z-10">
-              <span className="text-[#006b2c] font-bold text-sm">12,400+ Products</span>
+            <div className="mt-6 flex justify-between items-center relative z-10">
+              <span className="text-[#006b2c] font-bold text-xs">12,400+ Products</span>
+              <span className="material-symbols-outlined text-[#006b2c] text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </div>
           </div>
 
-          {/* Medium Card - Smartphones */}
+          {/* Card 2 - Smartphones */}
           <div
             onClick={() => {
               onSearchPrompt('Smartphones');
               onNavigate('recommendations');
             }}
-            className="md:col-span-3 md:row-span-1 group relative overflow-hidden rounded-2xl bg-[#6bff8f]/10 border border-[#006e2f]/10 p-6 sm:p-8 flex items-center justify-between transition-all hover:shadow-lg cursor-pointer"
+            className="group relative overflow-hidden rounded-2xl bg-[#6bff8f]/10 border border-[#006e2f]/15 p-6 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[220px]"
           >
-            <div>
-              <span className="material-symbols-outlined text-[#006e2f] text-[32px] mb-2">
+            <div className="relative z-10">
+              <span className="material-symbols-outlined text-[#006e2f] text-[36px] mb-3">
                 smartphone
               </span>
               <h3 className="text-xl font-bold mb-1 text-[#191c1e]">Smartphones</h3>
-              <p className="text-xs text-[#3e4a3d]">Next-gen mobile tech & pro optics.</p>
+              <p className="text-[#3e4a3d] text-xs">
+                Flagship cameras, Titanium frames, AI features & fast charging.
+              </p>
             </div>
-            <div className="w-24 h-24 opacity-40 group-hover:rotate-12 transition-transform">
-              <img
-                src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=400&q=80"
-                alt="Smartphones"
-                className="w-full h-full object-cover rounded-xl"
-              />
+            <div className="mt-6 flex justify-between items-center relative z-10">
+              <span className="text-[#006e2f] font-bold text-xs">8,900+ Products</span>
+              <span className="material-symbols-outlined text-[#006e2f] text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
             </div>
           </div>
 
-          {/* Small Card - Audio */}
+          {/* Card 3 - Headphones */}
           <div
             onClick={() => {
-              onSearchPrompt('Audio Headphones');
+              onSearchPrompt('Headphones');
               onNavigate('recommendations');
             }}
-            className="md:col-span-1.5 md:row-span-1 group relative overflow-hidden rounded-2xl bg-[#eceef0] border border-[#bdcaba]/30 p-6 flex flex-col justify-center text-center transition-all hover:shadow-lg cursor-pointer"
+            className="group relative overflow-hidden rounded-2xl bg-[#006b2c]/5 border border-[#006b2c]/15 p-6 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[220px]"
           >
-            <span className="material-symbols-outlined text-[#3e4a3d] text-[32px] mb-2 mx-auto">
-              headphones
-            </span>
-            <h4 className="font-bold text-[#191c1e] text-sm">Audio & Sound</h4>
+            <div className="relative z-10">
+              <span className="material-symbols-outlined text-[#006b2c] text-[36px] mb-3">
+                headphones
+              </span>
+              <h3 className="text-xl font-bold mb-1 text-[#191c1e]">Headphones & Earbuds</h3>
+              <p className="text-[#3e4a3d] text-xs">
+                Active noise cancellation, 60h battery life & audiophile drivers.
+              </p>
+            </div>
+            <div className="mt-6 flex justify-between items-center relative z-10">
+              <span className="text-[#006b2c] font-bold text-xs">15,200+ Products</span>
+              <span className="material-symbols-outlined text-[#006b2c] text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
           </div>
 
-          {/* Small Card - Wearables */}
+          {/* Card 4 - Wearables */}
           <div
             onClick={() => {
-              onSearchPrompt('Smartwatches Wearables');
+              onSearchPrompt('Wearables');
               onNavigate('recommendations');
             }}
-            className="md:col-span-1.5 md:row-span-1 group relative overflow-hidden rounded-2xl bg-[#eceef0] border border-[#bdcaba]/30 p-6 flex flex-col justify-center text-center transition-all hover:shadow-lg cursor-pointer"
+            className="group relative overflow-hidden rounded-2xl bg-[#eceef0] border border-[#bdcaba]/30 p-6 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[220px]"
           >
-            <span className="material-symbols-outlined text-[#3e4a3d] text-[32px] mb-2 mx-auto">
-              watch
-            </span>
-            <h4 className="font-bold text-[#191c1e] text-sm">Wearables</h4>
+            <div className="relative z-10">
+              <span className="material-symbols-outlined text-[#3e4a3d] text-[36px] mb-3">
+                watch
+              </span>
+              <h3 className="text-xl font-bold mb-1 text-[#191c1e]">Smartwatches & GPS</h3>
+              <p className="text-[#3e4a3d] text-xs">
+                AMOLED displays, multi-band GPS, dive computers & marathon watches.
+              </p>
+            </div>
+            <div className="mt-6 flex justify-between items-center relative z-10">
+              <span className="text-[#3e4a3d] font-bold text-xs">6,100+ Products</span>
+              <span className="material-symbols-outlined text-[#3e4a3d] text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
+          </div>
+
+          {/* Card 5 - Cameras */}
+          <div
+            onClick={() => {
+              onSearchPrompt('Cameras');
+              onNavigate('recommendations');
+            }}
+            className="group relative overflow-hidden rounded-2xl bg-[#00873a]/10 border border-[#006b2c]/15 p-6 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[220px]"
+          >
+            <div className="relative z-10">
+              <span className="material-symbols-outlined text-[#006b2c] text-[36px] mb-3">
+                photo_camera
+              </span>
+              <h3 className="text-xl font-bold mb-1 text-[#191c1e]">Cameras & Creator Tech</h3>
+              <p className="text-[#3e4a3d] text-xs">
+                Full-frame sensors, 40MP film simulation & mechanical gimbals.
+              </p>
+            </div>
+            <div className="mt-6 flex justify-between items-center relative z-10">
+              <span className="text-[#006b2c] font-bold text-xs">4,800+ Products</span>
+              <span className="material-symbols-outlined text-[#006b2c] text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
+          </div>
+
+          {/* Card 6 - Home Audio */}
+          <div
+            onClick={() => {
+              onSearchPrompt('Audio');
+              onNavigate('recommendations');
+            }}
+            className="group relative overflow-hidden rounded-2xl bg-[#6bff8f]/10 border border-[#006e2f]/15 p-6 flex flex-col justify-between transition-all hover:shadow-lg cursor-pointer min-h-[220px]"
+          >
+            <div className="relative z-10">
+              <span className="material-symbols-outlined text-[#006e2f] text-[36px] mb-3">
+                speaker
+              </span>
+              <h3 className="text-xl font-bold mb-1 text-[#191c1e]">Home Audio & Speakers</h3>
+              <p className="text-[#3e4a3d] text-xs">
+                Dolby Atmos spatial sound, vintage analog dials & waterproof gear.
+              </p>
+            </div>
+            <div className="mt-6 flex justify-between items-center relative z-10">
+              <span className="text-[#006e2f] font-bold text-xs">7,300+ Products</span>
+              <span className="material-symbols-outlined text-[#006e2f] text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
+            </div>
           </div>
         </div>
       </section>

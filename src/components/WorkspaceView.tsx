@@ -211,7 +211,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                 <input
                   type="range"
                   min="50"
-                  max="2000"
+                  max="2500"
                   step="50"
                   value={filters.maxBudget}
                   onChange={(e) => setFilters({ ...filters, maxBudget: Number(e.target.value) })}
@@ -230,11 +230,12 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                   className="w-full bg-white border border-[#bdcaba] rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e]"
                 >
                   <option value="All">All Categories</option>
+                  <option value="Laptops">Laptops</option>
                   <option value="Headphones">Headphones</option>
                   <option value="Smartphones">Smartphones</option>
-                  <option value="Laptops">Laptops</option>
-                  <option value="Cameras">Cameras</option>
                   <option value="Wearables">Wearables</option>
+                  <option value="Audio">Audio & Speakers</option>
+                  <option value="Cameras">Cameras</option>
                 </select>
               </div>
 
@@ -248,12 +249,12 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                   onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
                   className="w-full bg-white border border-[#bdcaba] rounded-xl p-3 text-sm focus:ring-2 focus:ring-[#006b2c] focus:border-[#006b2c] transition-all text-[#191c1e]"
                 >
-                  <option value="All">No Preference</option>
-                  <option value="Sony">Sony</option>
-                  <option value="Bose">Bose</option>
-                  <option value="Apple">Apple</option>
-                  <option value="Sennheiser">Sennheiser</option>
-                  <option value="Lumina Tech">Lumina Tech</option>
+                  <option value="All">All Brands</option>
+                  {Array.from(new Set(products.map((p) => p.brand))).sort().map((brandName) => (
+                    <option key={brandName} value={brandName}>
+                      {brandName}
+                    </option>
+                  ))}
                 </select>
               </div>
 

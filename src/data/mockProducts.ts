@@ -1,6 +1,7 @@
 import { Product, CategoryInfo } from '../types';
 
 export const mockProducts: Product[] = [
+  // ================= LAPTOPS =================
   {
     id: 'lumina-pro-x',
     name: 'PrecisionCore X1 (Lumina Pro X)',
@@ -44,6 +45,44 @@ export const mockProducts: Product[] = [
     inStock: true
   },
   {
+    id: 'macbook-air-m3',
+    name: 'Apple MacBook Air 15" (M3)',
+    brand: 'Apple',
+    category: 'Laptops',
+    price: 1299,
+    originalPrice: 1399,
+    matchScore: 96,
+    badge: 'SILENT EFFICIENCY',
+    image: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?auto=format&fit=crop&w=1200&q=80',
+      'https://images.unsplash.com/photo-1611186871348-b1ce696e52c9?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.9,
+    reviewCount: 3890,
+    summary: 'Ultra-thin 11.5mm fanless laptop powered by Apple M3 silicon with 18-hour battery, MagSafe 3 charging, and 500-nit Liquid Retina display.',
+    aiReason: 'Ideal for students, mobile professionals, and creators seeking zero fan noise, all-day battery endurance, and top-tier build quality.',
+    specs: {
+      'Processor': 'Apple M3 chip (8-core CPU, 10-core GPU)',
+      'Memory': '16GB Unified Memory',
+      'Storage': '512GB High-Speed SSD',
+      'Display': '15.3-inch Liquid Retina Display (2880x1864)',
+      'Battery Life': 'Up to 18 Hours wireless web',
+      'Weight': '1.51 kg (3.3 lbs)',
+      'Ports': 'MagSafe 3, 2x Thunderbolt / USB 4, 3.5mm Headphone Jack'
+    },
+    pros: [
+      '100% silent fanless cooling architecture',
+      'Class-leading battery efficiency and thermal management',
+      'Exceptional six-speaker sound system with Spatial Audio'
+    ],
+    cons: [
+      'Only supports dual external monitors when laptop lid is closed',
+      'Base model starts with 8GB unless upgraded'
+    ],
+    inStock: true
+  },
+  {
     id: 'zenith-ultra',
     name: 'Zenith Ultra Studio 16',
     brand: 'Zenith Tech',
@@ -79,6 +118,78 @@ export const mockProducts: Product[] = [
     cons: [
       'Heavier chassis (1.8 kg) and larger power brick',
       'Fans can get audible under sustained maximum load'
+    ],
+    inStock: true
+  },
+  {
+    id: 'dell-xps-14',
+    name: 'Dell XPS 14 OLED Flagship',
+    brand: 'Dell',
+    category: 'Laptops',
+    price: 1599,
+    originalPrice: 1799,
+    matchScore: 91,
+    badge: 'CREATOR SLIM',
+    image: 'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1593642632823-8f785ba67e45?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.7,
+    reviewCount: 1120,
+    summary: 'Sleek CNC machined aluminum workstation featuring 3.2K InfinityEdge touch OLED, NVIDIA RTX 4050, and seamless capacitive touch function row.',
+    aiReason: 'Recommended for video editors and software architects looking for compact power with a studio-grade OLED touch screen.',
+    specs: {
+      'Processor': 'Intel Core Ultra 7 155H (16-Core)',
+      'Graphics': 'NVIDIA GeForce RTX 4050 6GB GDDR6',
+      'Memory': '32GB LPDDR5X 7467MHz',
+      'Storage': '1TB PCIe Gen4 SSD',
+      'Display': '14.5" 3.2K (3200x2000) OLED Touch 120Hz',
+      'Weight': '1.68 kg (3.7 lbs)'
+    },
+    pros: [
+      'Flawless 3.2K 120Hz OLED infinity touch screen',
+      'Discrete RTX graphics in a compact 14-inch footprint',
+      'Premium machined aluminum and gorilla glass palm rest'
+    ],
+    cons: [
+      'All USB-C ports (requires adapters for legacy USB-A)',
+      'Touch function row has no physical tactile key travel'
+    ],
+    inStock: true
+  },
+  {
+    id: 'asus-zephyrus-g14',
+    name: 'ASUS ROG Zephyrus G14 OLED Gaming',
+    brand: 'Asus',
+    category: 'Laptops',
+    price: 1599,
+    originalPrice: 1749,
+    matchScore: 93,
+    badge: 'GAMING CHAMPION',
+    image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 2310,
+    summary: 'Ultra-portable 1.5kg gaming notebook with 3K 120Hz ROG Nebula OLED, AMD Ryzen 9 8945HS, and NVIDIA RTX 4070.',
+    aiReason: 'The absolute best gaming laptop for travel and daily work, combining thin-and-light portability with desktop-class ray tracing.',
+    specs: {
+      'Processor': 'AMD Ryzen 9 8945HS (8-Core / 16-Thread with Ryzen AI)',
+      'Graphics': 'NVIDIA GeForce RTX 4070 8GB GDDR6',
+      'Memory': '32GB LPDDR5X 6400MHz',
+      'Storage': '1TB NVMe PCIe 4.0 SSD',
+      'Display': '14" 3K (2880x1800) OLED 120Hz 0.2ms G-Sync',
+      'Weight': '1.5 kg (3.31 lbs)'
+    },
+    pros: [
+      'Incredible 3K OLED gaming panel with 0.2ms response time',
+      'Lightweight 1.5kg all-metal chassis with slash lighting',
+      'Deep bass audio with 4-speaker acoustic array'
+    ],
+    cons: [
+      'Soldered RAM cannot be upgraded after purchase',
+      'Surface can feel warm under intense AAA gaming sessions'
     ],
     inStock: true
   },
@@ -120,6 +231,44 @@ export const mockProducts: Product[] = [
     ],
     inStock: true
   },
+  {
+    id: 'lenovo-thinkpad-x1',
+    name: 'Lenovo ThinkPad X1 Carbon Gen 12',
+    brand: 'Lenovo',
+    category: 'Laptops',
+    price: 1420,
+    originalPrice: 1650,
+    matchScore: 92,
+    badge: 'BUSINESS ELITE',
+    image: 'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 1670,
+    summary: 'Legendary business ultrabook with aerospace-grade carbon fiber lid, iconic tactile keyboard, TrackPoint, and MIL-SPEC durability.',
+    aiReason: 'The benchmark for corporate productivity, keyboard typing ergonomics, and enterprise-grade privacy security.',
+    specs: {
+      'Processor': 'Intel Core Ultra 7 165U vPro',
+      'Memory': '32GB LPDDR5X',
+      'Storage': '1TB NVMe Opal Gen4 SSD',
+      'Display': '14" 2.8K (2880x1800) OLED 120Hz Anti-Reflection',
+      'Weight': '1.09 kg (2.42 lbs)',
+      'Ports': '2x Thunderbolt 4, 2x USB-A 3.2, HDMI 2.1, Nano SIM'
+    },
+    pros: [
+      'Best-in-class tactile keyboard and TrackPoint system',
+      'Featherlight 1.09kg weight with MIL-STD 810H durability',
+      'Comprehensive port selection including legacy USB-A & full HDMI'
+    ],
+    cons: [
+      'Integrated graphics not suited for heavy 3D rendering',
+      'OLED option slightly reduces battery longevity'
+    ],
+    inStock: true
+  },
+
+  // ================= HEADPHONES & EARBUDS =================
   {
     id: 'sony-wh1000xm4',
     name: 'Sony WH-1000XM4 Wireless Headphones',
@@ -194,6 +343,75 @@ export const mockProducts: Product[] = [
     inStock: true
   },
   {
+    id: 'sony-wf1000xm5',
+    name: 'Sony WF-1000XM5 True Wireless Earbuds',
+    brand: 'Sony',
+    category: 'Headphones',
+    price: 279,
+    originalPrice: 299,
+    matchScore: 95,
+    badge: 'COMPACT ANC',
+    image: 'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1590658268037-6bf12165a8df?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 3100,
+    summary: 'Flagship in-ear noise cancellation with Dynamic Driver X, dual feedback microphones, AI bone conduction sensors, and LDAC Hi-Res audio.',
+    aiReason: 'Pocket-sized noise isolation king that rivals full-size over-ear cans in ambient reduction and vocal clarity.',
+    specs: {
+      'Driver Size': '8.4mm Dynamic Driver X',
+      'Battery Life': '8 Hours (Earbuds) + 16 Hours (Case)',
+      'Water Resistance': 'IPX4 Splash Resistant',
+      'Weight': '5.9 g per earbud',
+      'Bluetooth': '5.3 with LDAC, LC3, AAC'
+    },
+    pros: [
+      'Incredible active noise cancellation in tiny earbud format',
+      'High-resolution LDAC audio with rich bass response',
+      'Comfortable memory foam ear tips in 4 sizes'
+    ],
+    cons: [
+      'Glossy finish can be slippery to extract from case',
+      'Microphone clarity in windy environments is average'
+    ],
+    inStock: true
+  },
+  {
+    id: 'airpods-pro-2',
+    name: 'Apple AirPods Pro 2 (USB-C)',
+    brand: 'Apple',
+    category: 'Headphones',
+    price: 249,
+    originalPrice: 249,
+    matchScore: 97,
+    badge: 'ALL-ROUNDER',
+    image: 'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1600294037681-c80b4cb5b434?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.9,
+    reviewCount: 6540,
+    summary: 'Apple H2 chip, adaptive audio, personalized spatial audio with head tracking, and MagSafe case with Precision Finding speaker.',
+    aiReason: 'The absolute standard for iPhone and Mac users wanting seamless device handoff, conversational awareness, and class-leading transparency.',
+    specs: {
+      'Chipset': 'Apple H2 headphone chip + U1/H2 in case',
+      'Battery Life': '6 Hours (ANC On) / 30 Hours total with Case',
+      'Water Resistance': 'IP54 Dust & Water Resistant',
+      'Charging': 'USB-C, MagSafe, Apple Watch Charger, Qi'
+    },
+    pros: [
+      'Unsurpassed transparency mode and conversation awareness',
+      'Case includes speaker and lanyard loop for easy locating',
+      'Swipe volume control directly on earbud stems'
+    ],
+    cons: [
+      'Advanced features limited on Android/Windows devices',
+      'Non-replaceable batteries'
+    ],
+    inStock: true
+  },
+  {
     id: 'sennheiser-m4',
     name: 'Sennheiser Momentum 4 Wireless',
     brand: 'Sennheiser',
@@ -262,6 +480,42 @@ export const mockProducts: Product[] = [
     ],
     inStock: true
   },
+  {
+    id: 'soundcore-space-one',
+    name: 'Anker Soundcore Space One ANC',
+    brand: 'Anker',
+    category: 'Headphones',
+    price: 99,
+    originalPrice: 129,
+    matchScore: 88,
+    badge: 'BEST UNDER $100',
+    image: 'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1546435770-a3e426bf472b?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.5,
+    reviewCount: 2890,
+    summary: 'Budget powerhouse with 2x stronger voice reduction, 40mm dynamic drivers, LDAC Hi-Res wireless, and 55-hour battery life.',
+    aiReason: 'Top budget pick under $100 offering exceptional ANC performance, long battery life, and comfortable lightweight ear cushions.',
+    specs: {
+      'Driver Size': '40mm Customized Dynamic Drivers',
+      'Battery Life': '40 Hours (ANC On) / 55 Hours (ANC Off)',
+      'Bluetooth': '5.3 with LDAC support',
+      'Weight': '259 g'
+    },
+    pros: [
+      'Superb active noise cancellation for under $100',
+      '55-hour battery runtime with 5-minute fast charge',
+      'Customizable Soundcore app with HearID sound profile'
+    ],
+    cons: [
+      'Plastics feel lighter and less premium than $300 flagships',
+      'Microphone pickup can be soft in noisy rooms'
+    ],
+    inStock: true
+  },
+
+  // ================= SMARTPHONES =================
   {
     id: 'samsung-s24-ultra',
     name: 'Samsung Galaxy S24 Ultra AI',
@@ -333,6 +587,78 @@ export const mockProducts: Product[] = [
     inStock: true
   },
   {
+    id: 'pixel-8-pro',
+    name: 'Google Pixel 8 Pro AI Flagship',
+    brand: 'Google',
+    category: 'Smartphones',
+    price: 899,
+    originalPrice: 999,
+    matchScore: 93,
+    badge: 'AI MAGIC',
+    image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.7,
+    reviewCount: 2780,
+    summary: 'Google Tensor G3 chip with 7 years of OS updates, Super Actua 2400-nit display, Best Take, Magic Audio Eraser, and built-in temperature sensor.',
+    aiReason: 'Pure Android experience with computational photography wizardry and long-term 7-year software support commitment.',
+    specs: {
+      'Processor': 'Google Tensor G3 with Titan M2 security',
+      'Display': '6.7" Super Actua LTPO OLED 1-120Hz (2400 nits)',
+      'Camera': '50MP Main + 48MP 5x Telephoto + 48MP Ultra-wide with Macro Focus',
+      'Battery': '5050 mAh (30W Fast Charging / Qi Wireless)',
+      'Updates': '7 Years of Full OS, Security & Feature Drops'
+    },
+    pros: [
+      'Industry-leading computational photography and Best Take',
+      '7 years of guaranteed software and security updates',
+      'Extremely bright 2400-nit Super Actua display'
+    ],
+    cons: [
+      'Tensor G3 benchmark scores trail Snapdragon in raw graphics compute',
+      'Charging speed takes over 75 minutes for full top-up'
+    ],
+    inStock: true
+  },
+  {
+    id: 'oneplus-12',
+    name: 'OnePlus 12 5G Hasselblad',
+    brand: 'OnePlus',
+    category: 'Smartphones',
+    price: 799,
+    originalPrice: 899,
+    matchScore: 92,
+    badge: 'VALUE FLAGSHIP',
+    image: 'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 1840,
+    summary: 'Blistering fast 80W wired / 50W wireless charging, Snapdragon 8 Gen 3, 5400mAh dual-cell battery, 4500-nit 2K ProXDR display, and 4th Gen Hasselblad camera.',
+    aiReason: 'Unbeatable flagship hardware specs per dollar spent. Recharges from 0 to 100% in under 30 minutes.',
+    specs: {
+      'Processor': 'Snapdragon 8 Gen 3',
+      'Memory': '16GB LPDDR5X',
+      'Display': '6.82" 2K 120Hz ProXDR LTPO (4500 nits peak)',
+      'Battery': '5400 mAh (80W SUPERVOOC + 50W AIRVOOC)',
+      'Camera': '50MP LYT-808 + 64MP 3x Periscope + 48MP Ultra-wide'
+    },
+    pros: [
+      'Lightning-fast 80W charging fills battery in 30 mins',
+      'Massive 5400 mAh battery delivers 2 full days of normal use',
+      'Spectacular 4500-nit peak brightness screen'
+    ],
+    cons: [
+      'Curved glass edges may have occasional palm touches',
+      'IP65 water resistance rating rather than IP68'
+    ],
+    inStock: true
+  },
+
+  // ================= WEARABLES =================
+  {
     id: 'garmin-epix-gen2',
     name: 'Garmin Epix Pro Gen 2 GPS Watch',
     brand: 'Garmin',
@@ -368,6 +694,111 @@ export const mockProducts: Product[] = [
     inStock: true
   },
   {
+    id: 'apple-watch-ultra-2',
+    name: 'Apple Watch Ultra 2 Titanium',
+    brand: 'Apple',
+    category: 'Wearables',
+    price: 799,
+    originalPrice: 799,
+    matchScore: 95,
+    badge: 'RUGGED SMARTWATCH',
+    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.9,
+    reviewCount: 3410,
+    summary: '49mm aerospace titanium case, 3000-nit display, S9 SiP with Double Tap gesture, precision dual-frequency GPS, and up to 72 hours in Low Power Mode.',
+    aiReason: 'The ultimate smartwatch for iPhone users doing scuba diving, trail running, mountaineering, or demanding maximum screen brightness.',
+    specs: {
+      'Case': '49mm Aerospace-Grade Titanium',
+      'Display': 'Always-On Retina OLED (3000 nits)',
+      'Battery Life': 'Up to 36 hours standard / 72 hours Low Power Mode',
+      'Water Resistance': '100m water resistant / EN13319 dive certified (40m)',
+      'Sensors': 'ECG, Blood Oxygen, Depth Gauge, Water Temp, Dual GPS'
+    },
+    pros: [
+      'Blindingly bright 3000-nit sapphire screen',
+      'Full recreational dive computer certification (Oceanic+ app)',
+      'Customizable high-visibility Action button'
+    ],
+    cons: [
+      'Large 49mm case may overpower smaller wrists',
+      'Strictly requires an iPhone to pair and setup'
+    ],
+    inStock: true
+  },
+  {
+    id: 'garmin-forerunner-965',
+    name: 'Garmin Forerunner 965 AMOLED',
+    brand: 'Garmin',
+    category: 'Wearables',
+    price: 599,
+    originalPrice: 599,
+    matchScore: 94,
+    badge: 'RUNNER CHOICE',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 940,
+    summary: 'Premium lightweight titanium bezel running watch with 1.4" AMOLED touchscreen, full color onboard mapping, Training Readiness score, and 23-day battery.',
+    aiReason: 'The gold standard for marathoners and triathletes seeking lightweight wrist feel with deep training load metrics.',
+    specs: {
+      'Display': '1.4" AMOLED Touchscreen (454x454)',
+      'Battery Life': 'Up to 23 Days smartwatch / 31 Hours GPS',
+      'Weight': '53 g',
+      'Metrics': 'VO2 Max, HRV Status, Stamina Insights, Race Predictor'
+    },
+    pros: [
+      'Lightweight 53g construction barely felt during marathons',
+      'Vivid 1.4-inch AMOLED display with full topographic maps',
+      'Over 3 weeks of battery life on a single charge'
+    ],
+    cons: [
+      'No built-in microphone for wrist phone calls',
+      'Garmin Pay bank support is more limited than Apple Pay'
+    ],
+    inStock: true
+  },
+  {
+    id: 'samsung-galaxy-watch-6',
+    name: 'Samsung Galaxy Watch 6 Classic',
+    brand: 'Samsung',
+    category: 'Wearables',
+    price: 349,
+    originalPrice: 399,
+    matchScore: 90,
+    badge: 'ROTATING BEZEL',
+    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.6,
+    reviewCount: 1980,
+    summary: 'Classic stainless steel design with tactile rotating bezel, advanced sleep coaching, BIA body composition analysis, and Wear OS powered by Samsung.',
+    aiReason: 'The best smartwatch companion for Android and Samsung Galaxy users with traditional timepiece aesthetics and physical rotating ring navigation.',
+    specs: {
+      'Case': 'Stainless Steel 47mm / 43mm',
+      'Display': '1.5" Super AMOLED Sapphire Crystal (2000 nits)',
+      'Battery': 'Up to 40 Hours (WPC wireless fast charging)',
+      'Sensors': 'BioActive Sensor (HR, ECG, BIA), Temp sensor, Barometer'
+    },
+    pros: [
+      'Satisfying physical rotating bezel navigation',
+      'Comprehensive body composition and sleep tracking',
+      'Crisp sapphire crystal glass protection'
+    ],
+    cons: [
+      '1 to 1.5 day battery life requires daily recharging',
+      'Certain health features (ECG/BP) require Samsung phone'
+    ],
+    inStock: true
+  },
+
+  // ================= CAMERAS =================
+  {
     id: 'sony-a7iv-camera',
     name: 'Sony Alpha 7 IV Full-Frame Camera',
     brand: 'Sony',
@@ -401,6 +832,180 @@ export const mockProducts: Product[] = [
       'No charger included in box'
     ],
     inStock: true
+  },
+  {
+    id: 'fujifilm-xt5',
+    name: 'Fujifilm X-T5 Mirrorless Camera',
+    brand: 'Fujifilm',
+    category: 'Cameras',
+    price: 1699,
+    originalPrice: 1699,
+    matchScore: 94,
+    badge: 'FILM SIMULATION',
+    image: 'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1502920917128-1aa500764cbd?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.9,
+    reviewCount: 1420,
+    summary: 'Classic retro photography camera with 40.2MP X-Trans CMOS 5 HR sensor, 19 film simulation modes, 7-stop IBIS, and analog dial controls.',
+    aiReason: 'Unmatched color rendering straight out of camera without post-processing, beloved by street, travel, and documentary photographers.',
+    specs: {
+      'Sensor': '40.2MP APS-C X-Trans CMOS 5 HR',
+      'Video': '6.2K 30p / 4K 60p 10-bit 4:2:2',
+      'Stabilization': '7.0-Stop 5-Axis In-Body Image Stabilization',
+      'Shutter Speed': 'Up to 1/180,000 sec electronic shutter',
+      'Controls': 'Dedicated physical ISO, Shutter Speed, and Exposure dials'
+    },
+    pros: [
+      'Legendary Fujifilm Film Simulations produce stunning JPEGs',
+      'Tactile analog physical dials provide pure photography joy',
+      'Impressive 40.2MP high-resolution sensor with 7-stop IBIS'
+    ],
+    cons: [
+      'Three-way tilting screen is photo-oriented (does not flip for vlogging)',
+      'Continuous buffer fills quickly at max burst rates'
+    ],
+    inStock: true
+  },
+  {
+    id: 'dji-osmo-pocket-3',
+    name: 'DJI Osmo Pocket 3 Creator Combo',
+    brand: 'DJI',
+    category: 'Cameras',
+    price: 519,
+    originalPrice: 669,
+    matchScore: 96,
+    badge: 'CREATOR VLOG',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.9,
+    reviewCount: 2950,
+    summary: 'Pocket-sized gimbal camera with 1-inch CMOS sensor, rotatable 2-inch OLED touchscreen, 4K/120fps recording, and 3-axis mechanical stabilization.',
+    aiReason: 'The absolute best vlogging and travel video tool on the market. Produces silky smooth cinematic footage in low light in a palm-sized package.',
+    specs: {
+      'Sensor': '1-Inch CMOS Sensor with D-Log M 10-Bit color',
+      'Stabilization': '3-Axis Mechanical Gimbal Hardware',
+      'Display': '2-inch Rotatable OLED Touchscreen',
+      'Battery Life': '166 Minutes (80% charge in 16 mins)',
+      'Audio': 'Omnidirectional stereo recording + DJI Mic 2 support'
+    },
+    pros: [
+      'True 1-inch sensor performs brilliantly in night/low-light',
+      'Mechanical 3-axis gimbal eliminates all handheld walking shake',
+      'Rotatable screen allows instant switching between vertical & horizontal'
+    ],
+    cons: [
+      'Fixed focal length lens has no optical zoom',
+      'Gimbal mechanism requires careful storage in provided case'
+    ],
+    inStock: true
+  },
+
+  // ================= AUDIO & SPEAKERS =================
+  {
+    id: 'sonos-era-300',
+    name: 'Sonos Era 300 Spatial Audio Speaker',
+    brand: 'Sonos',
+    category: 'Audio',
+    price: 449,
+    originalPrice: 449,
+    matchScore: 95,
+    badge: 'SPATIAL AUDIO',
+    image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 1530,
+    summary: 'Revolutionary acoustic architecture with six optimally positioned drivers all around front, sides, and top to support Dolby Atmos Spatial Audio.',
+    aiReason: 'Pioneering home spatial audio speaker that projects music in three dimensions, filling rooms with immersive multidirectional sound.',
+    specs: {
+      'Amplifiers': 'Six Class-D digital amplifiers',
+      'Drivers': '4 tweeters + 2 woofers angled for multidirectional projection',
+      'Connectivity': 'Wi-Fi 6, Bluetooth 5.0, Apple AirPlay 2, USB-C Line-In',
+      'Tuning': 'Trueplay tuning software for automatic acoustic room calibration'
+    },
+    pros: [
+      'Mind-blowing Dolby Atmos spatial audio immersion',
+      'Trueplay auto-calibrates acoustics to your room layout',
+      'Supports Wi-Fi streaming, Bluetooth, and line-in input'
+    ],
+    cons: [
+      'Requires AC wall power (not a portable battery speaker)',
+      'Dolby Atmos requires compatible streaming services (Apple Music, Amazon Music)'
+    ],
+    inStock: true
+  },
+  {
+    id: 'marshall-stanmore-3',
+    name: 'Marshall Stanmore III Bluetooth Speaker',
+    brand: 'Marshall',
+    category: 'Audio',
+    price: 379,
+    originalPrice: 399,
+    matchScore: 91,
+    badge: 'ICONIC DESIGN',
+    image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.8,
+    reviewCount: 2190,
+    summary: 'Vintage rock-and-roll aesthetic with brass analog knobs, 80W total output power, outward angled tweeters, and dynamic loudness compensation.',
+    aiReason: 'Statement centerpiece speaker delivering punchy, room-shaking rock & acoustic sound with tactile brass bass and treble control dials.',
+    specs: {
+      'Power Output': '80W Class-D Amplification (1x 50W Woofer + 2x 15W Tweeters)',
+      'Frequency Range': '45 – 20,000 Hz',
+      'Connectivity': 'Bluetooth 5.2, 3.5mm AUX, RCA Input',
+      'Dimensions': '350 x 203 x 188 mm (4.25 kg)'
+    },
+    pros: [
+      'Gorgeously detailed vintage textured vinyl and brass trim',
+      'Rich, warm, thunderous bass response that easily fills large rooms',
+      'Analog rotary knobs provide immediate EQ adjustment'
+    ],
+    cons: [
+      'Stationary plug-in design with no rechargeable internal battery',
+      'No built-in Wi-Fi streaming or AirPlay'
+    ],
+    inStock: true
+  },
+  {
+    id: 'jbl-flip-6',
+    name: 'JBL Flip 6 Waterproof Portable Speaker',
+    brand: 'JBL',
+    category: 'Audio',
+    price: 99,
+    originalPrice: 129,
+    matchScore: 93,
+    badge: 'OUTDOOR PORTABLE',
+    image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=80',
+    galleryImages: [
+      'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=1200&q=80'
+    ],
+    rating: 4.7,
+    reviewCount: 8420,
+    summary: 'Rugged IP67 waterproof and dustproof portable Bluetooth speaker with 2-way racetrack woofer, separate tweeter, and 12-hour playtime.',
+    aiReason: 'The ultimate compact travel speaker for beach trips, pool parties, camping, and hikes under $100.',
+    specs: {
+      'Output Power': '20W RMS Woofer + 10W RMS Tweeter (30W Total)',
+      'Battery Life': '12 Hours Playtime (2.5 Hour recharge)',
+      'Water Rating': 'IP67 Waterproof and Dustproof',
+      'Bluetooth': '5.1 with JBL PartyBoost linking'
+    },
+    pros: [
+      'Completely waterproof and floats in water without damage',
+      'Surprising bass punch and clarity for its compact water-bottle size',
+      'PartyBoost allows chaining multiple JBL speakers together'
+    ],
+    cons: [
+      'No microphone for speakerphone phone calls',
+      'No auxiliary 3.5mm line-in port'
+    ],
+    inStock: true
   }
 ];
 
@@ -422,11 +1027,11 @@ export const mockCategories: CategoryInfo[] = [
     featuredProduct: 'Galaxy Ultra AI'
   },
   {
-    id: 'audio',
-    name: 'Audio & Headphones',
+    id: 'headphones',
+    name: 'Headphones & Earbuds',
     itemCount: '15,200+ Products',
     image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80',
-    description: 'Noise cancelling over-ears, wireless earbuds, studio monitors, and soundbars.',
+    description: 'Noise cancelling over-ears, wireless earbuds, studio monitors, and audiophile gear.',
     featuredProduct: 'Sony WH-1000XM4'
   },
   {
@@ -436,12 +1041,29 @@ export const mockCategories: CategoryInfo[] = [
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
     description: 'Fitness trackers, health monitors, GPS outdoor watches, and smart rings.',
     featuredProduct: 'Garmin Epix Gen 2'
+  },
+  {
+    id: 'cameras',
+    name: 'Cameras & Creator Gear',
+    itemCount: '4,800+ Products',
+    image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80',
+    description: 'Full-frame mirrorless, vlogging gimbals, cinema lenses, and action cameras.',
+    featuredProduct: 'Sony Alpha 7 IV'
+  },
+  {
+    id: 'audio',
+    name: 'Home Audio & Speakers',
+    itemCount: '7,300+ Products',
+    image: 'https://images.unsplash.com/photo-1545454675-3531b543be5d?auto=format&fit=crop&w=800&q=80',
+    description: 'Spatial audio home sound systems, rugged portable speakers, and studio monitors.',
+    featuredProduct: 'Sonos Era 300'
   }
 ];
 
 export const mockQuickPrompts = [
-  'Ergonomic office chair for back pain under $300',
   'Noise-cancelling headphones for flights with 20h+ battery',
-  'Smartphone with best zoom camera & OLED screen',
-  'Lightweight laptop for college with silent cooling'
+  'Lightweight laptop for college and coding under $1000',
+  'Smartphone with best optical zoom camera & OLED screen',
+  'Waterproof portable speaker for outdoor adventures under $150',
+  'Rugged GPS multisport smartwatch with multi-week battery'
 ];
