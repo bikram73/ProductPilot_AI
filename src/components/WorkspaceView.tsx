@@ -107,28 +107,52 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     });
   }, [products, filters, extractedIntent]);
 
-  // Fetch buying advice whenever top products change
+  const lastAdviceFetchRef = React.useRef<string>('');
+  const adviceTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch buying advice only when top products or query truly changes, debounced
   useEffect(() => {
     if (rankedProducts.length > 0) {
       const top3 = rankedProducts.slice(0, 3);
-      fetch('/api/gemini/explain-recommendations', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userQuery: promptText,
-          preferences: extractedIntent,
-          topProducts: top3
+      const signature = `${promptText}_${top3.map(p => p.id).join('-')}`;
+      
+      if (lastAdviceFetchRef.current === signature) {
+        return;
+      }
+
+      if (adviceTimeoutRef.current) {
+        clearTimeout(adviceTimeoutRef.current);
+      }
+
+      adviceTimeoutRef.current = setTimeout(() => {
+        lastAdviceFetchRef.current = signature;
+        fetch('/api/gemini/explain-recommendations', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            userQuery: promptText,
+            preferences: extractedIntent,
+            topProducts: top3
+          })
         })
-      })
-        .then(res => res.json())
-        .then(data => {
-          if (data && !data.error) {
-            setBuyingAdvice(data);
-          }
-        })
-        .catch(err => console.error('Buying advice fetch error:', err));
+          .then(res => res.json())
+          .then(data => {
+            if (data && !data.error) {
+              setBuyingAdvice(data);
+            }
+          })
+          .catch(() => {
+            // Silently fallback without crashing
+          });
+      }, 600);
     }
-  }, [rankedProducts, promptText]);
+
+    return () => {
+      if (adviceTimeoutRef.current) {
+        clearTimeout(adviceTimeoutRef.current);
+      }
+    };
+  }, [rankedProducts, promptText, extractedIntent]);
 
   const handleResetFilters = () => {
     setFilters({

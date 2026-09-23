@@ -11,6 +11,31 @@ const PORT = 3000;
 
 app.use(express.json());
 
+// In-memory LRU cache to prevent burning API quotas
+const apiCache = new Map<string, { timestamp: number; data: any }>();
+const CACHE_TTL_MS = 1000 * 60 * 30; // 30 minutes cache
+
+function getCached(key: string) {
+  const item = apiCache.get(key);
+  if (!item) return null;
+  if (Date.now() - item.timestamp > CACHE_TTL_MS) {
+    apiCache.delete(key);
+    return null;
+  }
+  return item.data;
+}
+
+function setCache(key: string, data: any) {
+  if (apiCache.size > 500) {
+    const firstKey = apiCache.keys().next().value;
+    if (firstKey) apiCache.delete(firstKey);
+  }
+  apiCache.set(key, { timestamp: Date.now(), data });
+}
+
+// Cooldown tracker for rate-limited models
+let rateLimitUntil = 0;
+
 // Initialize Gemini SDK with User-Agent header
 const getGeminiClient = () => {
   const apiKey = process.env.GEMINI_API_KEY;
@@ -30,7 +55,10 @@ const getGeminiClient = () => {
 const MODELS_FALLBACK_LIST = ['gemini-3.8-flash', 'gemini-flash-latest', 'gemini-3.1-flash-lite'];
 
 async function generateWithFallback(ai: GoogleGenAI, params: { contents: string; config?: any }) {
-  let lastError: any = null;
+  if (Date.now() < rateLimitUntil) {
+    throw new Error('In rate-limit cooldown, using heuristic fallback');
+  }
+
   for (const model of MODELS_FALLBACK_LIST) {
     try {
       const response = await ai.models.generateContent({
@@ -42,11 +70,12 @@ async function generateWithFallback(ai: GoogleGenAI, params: { contents: string;
         return response;
       }
     } catch (err: any) {
-      lastError = err;
-      console.warn(`Model ${model} failed, trying next fallback... Reason:`, err?.message || err);
+      if (err?.status === 'RESOURCE_EXHAUSTED' || err?.code === 429 || err?.message?.includes('429')) {
+        rateLimitUntil = Date.now() + 20000; // 20s cooldown
+      }
     }
   }
-  throw lastError || new Error('All Gemini models failed');
+  throw new Error('Gemini API unavailable or quota reached');
 }
 
 // Fallback heuristics for preference extraction
@@ -107,9 +136,16 @@ app.post('/api/gemini/extract-preferences', async (req, res) => {
     return res.status(400).json({ error: 'Query is required' });
   }
 
+  const cacheKey = `extract_${query.trim().toLowerCase()}`;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    return res.json(cached);
+  }
+
   const fallback = extractPreferencesHeuristically(query);
   const ai = getGeminiClient();
   if (!ai) {
+    setCache(cacheKey, fallback);
     return res.json(fallback);
   }
 
@@ -145,16 +181,18 @@ If a field is not specified, set it to null or empty array.`,
     });
 
     const parsed = JSON.parse(response.text || '{}');
-    return res.json({
+    const result = {
       category: parsed.category || fallback.category,
       budget: parsed.budget || fallback.budget,
       brand: parsed.brand || fallback.brand,
       purpose: parsed.purpose || fallback.purpose,
       features: (parsed.features && parsed.features.length > 0) ? parsed.features : fallback.features,
       rawQuery: query,
-    });
-  } catch (error: any) {
-    console.warn('API error in /api/gemini/extract-preferences, using fallback:', error?.message || error);
+    };
+    setCache(cacheKey, result);
+    return res.json(result);
+  } catch (_e) {
+    setCache(cacheKey, fallback);
     return res.json(fallback);
   }
 });
@@ -162,6 +200,13 @@ If a field is not specified, set it to null or empty array.`,
 // API Endpoint 2: Explain Recommendation & Buying Advice
 app.post('/api/gemini/explain-recommendations', async (req, res) => {
   const { userQuery, preferences, topProducts } = req.body;
+  const topIds = (topProducts || []).map((p: any) => p.id).join(',');
+  const cacheKey = `explain_${(userQuery || '').trim().toLowerCase()}_${topIds}`;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    return res.json(cached);
+  }
+
   const defaultAdvice = {
     summary: topProducts?.[0]
       ? `Based on your criteria, ${topProducts[0].name} is the top match delivering high reliability, strong battery runtime, and premium build quality within your scope.`
@@ -177,6 +222,7 @@ app.post('/api/gemini/explain-recommendations', async (req, res) => {
 
   const ai = getGeminiClient();
   if (!ai) {
+    setCache(cacheKey, defaultAdvice);
     return res.json(defaultAdvice);
   }
 
@@ -212,15 +258,23 @@ Output JSON format:
     });
 
     const parsed = JSON.parse(response.text || '{}');
+    setCache(cacheKey, parsed);
     return res.json(parsed);
-  } catch (error: any) {
-    console.warn('API error in /api/gemini/explain-recommendations, using fallback advice:', error?.message || error);
+  } catch (_e) {
+    setCache(cacheKey, defaultAdvice);
     return res.json(defaultAdvice);
   }
 });
 
 // API Endpoint 3: Cold Start Follow-up Questions
 app.post('/api/gemini/cold-start', async (req, res) => {
+  const { prompt } = req.body;
+  const cacheKey = `cold_${(prompt || '').trim().toLowerCase()}`;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    return res.json(cached);
+  }
+
   const defaultQuestions = {
     questions: [
       "What is your target budget limit?",
@@ -229,9 +283,9 @@ app.post('/api/gemini/cold-start', async (req, res) => {
     ]
   };
 
-  const { prompt } = req.body;
   const ai = getGeminiClient();
   if (!ai) {
+    setCache(cacheKey, defaultQuestions);
     return res.json(defaultQuestions);
   }
 
@@ -254,9 +308,10 @@ app.post('/api/gemini/cold-start', async (req, res) => {
     });
 
     const parsed = JSON.parse(response.text || '{}');
+    setCache(cacheKey, parsed);
     return res.json(parsed);
-  } catch (error: any) {
-    console.warn('API error in /api/gemini/cold-start, using fallback:', error?.message || error);
+  } catch (_e) {
+    setCache(cacheKey, defaultQuestions);
     return res.json(defaultQuestions);
   }
 });
@@ -264,11 +319,20 @@ app.post('/api/gemini/cold-start', async (req, res) => {
 // API Endpoint 4: AI Assistant Copilot
 app.post('/api/gemini/assistant', async (req, res) => {
   const { messages, contextProducts } = req.body;
+  const lastUserMsg = (messages || []).filter((m: any) => m.sender === 'user').slice(-1)[0]?.text || '';
+  const cacheKey = `chat_${lastUserMsg.trim().toLowerCase()}`;
+  const cached = getCached(cacheKey);
+  if (cached) {
+    return res.json(cached);
+  }
+
+  const fallbackReply = {
+    reply: "Based on our product catalog, our top picks offer class-leading performance, optimal battery runtime, and proven user satisfaction. Let me know if you want a detailed spec comparison!"
+  };
+
   const ai = getGeminiClient();
   if (!ai) {
-    return res.json({
-      reply: "I am ProductPilot AI. How can I help you choose the best product today?"
-    });
+    return res.json(fallbackReply);
   }
 
   try {
@@ -288,12 +352,11 @@ Be friendly, direct, concise, and helpful. Mention specific product names when r
       },
     });
 
-    return res.json({ reply: response.text });
-  } catch (error: any) {
-    console.warn('API error in /api/gemini/assistant, using fallback:', error?.message || error);
-    return res.json({
-      reply: "Based on our product catalog, our top picks offer class-leading performance, optimal battery runtime, and proven user satisfaction. Let me know if you want a detailed spec comparison!"
-    });
+    const resObj = { reply: response.text };
+    setCache(cacheKey, resObj);
+    return res.json(resObj);
+  } catch (_e) {
+    return res.json(fallbackReply);
   }
 });
 
