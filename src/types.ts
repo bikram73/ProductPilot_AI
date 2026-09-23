@@ -10,6 +10,19 @@ export interface Product {
   price: number;
   originalPrice?: number;
   matchScore: number; // 0 to 100
+  calculatedMatchScore?: number;
+  scoreBreakdown?: {
+    budgetScore: number;
+    featureScore: number;
+    categoryScore: number;
+  };
+  benchmarks?: {
+    geekbenchSingle?: number;
+    geekbenchMulti?: number;
+    batteryHours?: number;
+    noiseScore?: number;
+    valueIndex?: number;
+  };
   badge?: string; // e.g., 'BEST OVERALL', 'BUDGET PICK', 'BATTERY KING', 'WINNER'
   image: string;
   galleryImages?: string[];

@@ -23,8 +23,16 @@ export default function App() {
   ]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  const comparedProducts = mockProducts.filter((p) =>
+    selectedCompareIds.includes(p.id)
+  );
+
+  const bestComparedProduct = comparedProducts.length > 0
+    ? [...comparedProducts].sort((a, b) => (b.calculatedMatchScore || b.matchScore) - (a.calculatedMatchScore || a.matchScore))[0]
+    : mockProducts[0];
+
   const selectedProduct =
-    mockProducts.find((p) => p.id === selectedProductId) || mockProducts[0];
+    mockProducts.find((p) => p.id === selectedProductId) || bestComparedProduct;
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -62,13 +70,13 @@ export default function App() {
   };
 
   const handleNavigate = (page: NavigationPage) => {
+    if (page === 'product-detail' && comparedProducts.length > 0 && !selectedCompareIds.includes(selectedProductId)) {
+      // Automatically show the best product based on active comparison
+      setSelectedProductId(bestComparedProduct.id);
+    }
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
-
-  const comparedProducts = mockProducts.filter((p) =>
-    selectedCompareIds.includes(p.id)
-  );
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 text-slate-900 font-['Plus_Jakarta_Sans',sans-serif]">
@@ -132,6 +140,8 @@ export default function App() {
           <ProductDetailView
             product={selectedProduct}
             allProducts={mockProducts}
+            comparedProducts={comparedProducts}
+            bestComparedProduct={bestComparedProduct}
             onSelectProduct={(id) => setSelectedProductId(id)}
             onNavigate={handleNavigate}
             onToggleCompare={handleToggleCompare}
