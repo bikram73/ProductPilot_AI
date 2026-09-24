@@ -318,9 +318,3 @@ $$\text{Match Score} = \min\left(99, \sum_{i=1}^{n} \left[ W_i \times \text{Norm
 ## 📄 License
 
 Distributed under the **MIT License**. See `LICENSE` for more information.
-
-<div align="center">
-
-Made with 💚 by **ProductPilot AI Team**
-
-</div>
