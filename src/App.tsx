@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { NavigationPage } from './types';
 import { mockProducts } from './data/mockProducts';
 import { Navbar } from './components/Navbar';
+import { MobileBottomNav } from './components/MobileBottomNav';
 import { Footer } from './components/Footer';
 import { HomeView } from './components/HomeView';
 import { WorkspaceView } from './components/WorkspaceView';
@@ -83,12 +84,14 @@ export default function App() {
       
       {/* Toast Notification Alert */}
       {toastMessage && (
-        <div className="fixed top-20 right-6 z-50 bg-[#003915] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl border border-[#7ffc97]/40 flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
-          <span className="material-symbols-outlined text-base text-[#7ffc97]">info</span>
-          <span>{toastMessage}</span>
+        <div className="fixed top-18 sm:top-20 right-4 sm:right-6 left-4 sm:left-auto max-w-sm sm:max-w-md mx-auto sm:mx-0 z-50 bg-[#003915] text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow-2xl border border-[#7ffc97]/40 flex items-center justify-between gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-base text-[#7ffc97] shrink-0">info</span>
+            <span className="line-clamp-2">{toastMessage}</span>
+          </div>
           <button
             onClick={() => setToastMessage(null)}
-            className="ml-2 text-white/60 hover:text-white"
+            className="p-1 text-white/70 hover:text-white shrink-0 cursor-pointer"
           >
             <span className="material-symbols-outlined text-sm">close</span>
           </button>
@@ -103,7 +106,7 @@ export default function App() {
       />
 
       {/* Main Screen Views */}
-      <main className="flex-1">
+      <main className="flex-1 pb-16 md:pb-0">
         {currentPage === 'home' && (
           <HomeView
             onNavigate={handleNavigate}
@@ -158,27 +161,30 @@ export default function App() {
       {selectedCompareIds.length > 0 && currentPage === 'recommendations' && (
         <aside
           aria-label="Comparison dock"
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 backdrop-blur-md text-white px-4 sm:px-6 py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center gap-3 sm:gap-6 max-w-[95vw] sm:max-w-xl transition-all"
+          className="fixed bottom-20 sm:bottom-6 left-1/2 -translate-x-1/2 z-40 bg-slate-900/95 backdrop-blur-md text-white px-3.5 sm:px-6 py-2.5 sm:py-3 rounded-2xl shadow-2xl border border-slate-700/80 flex items-center justify-between gap-3 sm:gap-6 max-w-[94vw] sm:max-w-xl transition-all"
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
             <span className="material-symbols-outlined text-[#7ffc97] text-lg">equalizer</span>
             <div className="hidden sm:block">
               <p className="text-[11px] font-extrabold text-[#7ffc97] uppercase tracking-wider">Compare Matrix</p>
               <p className="text-[10px] text-slate-400">{selectedCompareIds.length} items added</p>
             </div>
+            <span className="sm:hidden text-xs font-bold text-[#7ffc97]">
+              {selectedCompareIds.length} items
+            </span>
           </div>
 
           {/* Product Thumbnail Chips */}
-          <div className="flex items-center gap-2 overflow-x-auto">
+          <div className="flex items-center gap-1.5 overflow-x-auto max-w-[140px] sm:max-w-xs scrollbar-hide">
             {comparedProducts.map((p) => (
               <div
                 key={p.id}
-                className="relative group bg-slate-800 rounded-lg p-1 border border-slate-700 flex items-center gap-1.5 shrink-0"
+                className="relative group bg-slate-800 rounded-lg p-1 border border-slate-700 flex items-center gap-1 shrink-0"
               >
                 <img
                   src={p.image}
                   alt={p.name}
-                  className="w-8 h-8 rounded object-cover"
+                  className="w-7 h-7 sm:w-8 sm:h-8 rounded object-cover"
                 />
                 <button
                   onClick={() => handleRemoveFromCompare(p.id)}
@@ -191,17 +197,17 @@ export default function App() {
             ))}
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             <button
               onClick={() => handleNavigate('compare')}
-              className="px-3.5 py-1.5 bg-[#006b2c] hover:bg-[#00873a] text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center gap-1 cursor-pointer"
+              className="px-3 sm:px-3.5 py-1.5 bg-[#006b2c] hover:bg-[#00873a] text-white font-bold text-xs rounded-xl shadow-md transition-colors flex items-center gap-1 cursor-pointer"
             >
               <span>Compare</span>
               <span className="material-symbols-outlined text-sm">arrow_forward</span>
             </button>
             <button
               onClick={handleClearCompare}
-              className="text-[11px] text-slate-400 hover:text-white px-1.5 py-1 cursor-pointer"
+              className="text-[11px] text-slate-400 hover:text-white px-1 py-1 cursor-pointer"
               title="Clear all"
             >
               Clear
@@ -219,9 +225,17 @@ export default function App() {
         }}
       />
 
+      {/* Mobile Bottom Navigation Dock */}
+      <MobileBottomNav
+        currentPage={currentPage}
+        onNavigate={handleNavigate}
+        selectedCompareCount={selectedCompareIds.length}
+      />
+
       {/* Footer */}
       <Footer onNavigate={handleNavigate} />
 
     </div>
   );
 }
+

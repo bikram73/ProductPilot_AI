@@ -15,7 +15,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
   return (
     <>
       <footer className="bg-[#f2f4f6] border-t border-[#bdcaba]/30 mt-16 font-['Plus_Jakarta_Sans',sans-serif]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 py-12 px-4 sm:px-8 max-w-[1440px] mx-auto text-sm">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 pt-10 pb-28 md:py-12 px-4 sm:px-8 max-w-[1440px] mx-auto text-sm">
           
           {/* Brand Col */}
           <div className="sm:col-span-2 space-y-4">

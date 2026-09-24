@@ -31,7 +31,7 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
   const otherComparedProducts = comparedProducts.filter((p) => p.id !== product.id);
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-8 pb-24 font-['Plus_Jakarta_Sans',sans-serif]">
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-6 sm:py-8 space-y-6 sm:space-y-8 pb-32 sm:pb-24 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* Breadcrumbs & Matrix Link */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -125,35 +125,35 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
       )}
 
       {/* TOP HERO ASYMMETRIC SECTION */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
         
         {/* Gallery Column (7 cols) */}
-        <div className="lg:col-span-7 space-y-4">
-          <div className="h-[380px] sm:h-[450px] rounded-2xl overflow-hidden bg-[#eceef0] border border-[#bdcaba]/30 shadow-xs relative group flex items-center justify-center p-4">
+        <div className="lg:col-span-7 space-y-3 sm:space-y-4">
+          <div className="h-[260px] sm:h-[380px] md:h-[450px] rounded-2xl overflow-hidden bg-[#eceef0] border border-[#bdcaba]/30 shadow-xs relative group flex items-center justify-center p-3 sm:p-4">
             <img
               src={selectedImage}
               alt={product.name}
               className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 rounded-xl"
             />
             {product.badge && (
-              <span className="absolute top-4 left-4 bg-[#006b2c] text-white font-extrabold text-xs px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+              <span className="absolute top-3 left-3 sm:top-4 sm:left-4 bg-[#006b2c] text-white font-extrabold text-[10px] sm:text-xs px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full uppercase tracking-wider shadow-md">
                 {product.badge}
               </span>
             )}
-            <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md border border-[#006b2c]/30 px-3 py-1 rounded-full text-[#006b2c] text-xs font-extrabold shadow-md flex items-center gap-1">
-              <span className="material-symbols-outlined text-sm">auto_awesome</span>
+            <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-md border border-[#006b2c]/30 px-2.5 py-1 rounded-full text-[#006b2c] text-[10px] sm:text-xs font-extrabold shadow-md flex items-center gap-1">
+              <span className="material-symbols-outlined text-xs sm:text-sm">auto_awesome</span>
               <span>{product.matchScore}% Match Score</span>
             </div>
           </div>
 
           {/* Thumbnails */}
           {images.length > 1 && (
-            <div className="flex items-center gap-3 overflow-x-auto pb-2">
+            <div className="flex items-center gap-2 sm:gap-3 overflow-x-auto pb-1 scrollbar-hide">
               {images.map((imgUrl, idx) => (
                 <button
                   key={idx}
                   onClick={() => setSelectedImage(imgUrl)}
-                  className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
+                  className={`w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden border-2 transition-all shrink-0 cursor-pointer ${
                     selectedImage === imgUrl ? 'border-[#006b2c] ring-2 ring-[#006b2c]/20' : 'border-[#bdcaba]/40 opacity-70 hover:opacity-100'
                   }`}
                 >
@@ -490,6 +490,36 @@ export const ProductDetailView: React.FC<ProductDetailViewProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* STICKY MOBILE ACTION DOCK (Above Bottom Nav on screens < md) */}
+      <div className="md:hidden fixed bottom-14 left-0 right-0 z-30 bg-white/95 backdrop-blur-xl border-t border-[#bdcaba]/40 px-3.5 py-2.5 flex items-center justify-between gap-3 shadow-lg">
+        <div className="min-w-0">
+          <span className="text-[11px] text-[#3e4a3d] line-clamp-1 font-medium">{product.name}</span>
+          <span className="text-base font-extrabold text-[#006b2c]">${product.price}.00</span>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => onToggleCompare(product.id)}
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1 active:scale-95 ${
+              isCompared
+                ? 'bg-[#00873a] text-white shadow-xs'
+                : 'bg-slate-100 text-[#191c1e] hover:bg-slate-200'
+            }`}
+          >
+            <span className="material-symbols-outlined text-[15px]">equalizer</span>
+            <span>{isCompared ? 'In Compare ✓' : '+ Compare'}</span>
+          </button>
+          <a
+            href="https://amazon.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-2 bg-[#006b2c] hover:bg-[#00873a] text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow-xs active:scale-95"
+          >
+            <span>Retailer</span>
+            <span className="material-symbols-outlined text-xs">open_in_new</span>
+          </a>
         </div>
       </div>
 

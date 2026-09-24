@@ -92,34 +92,35 @@ export const AiAssistantFab: React.FC<AiAssistantFabProps> = ({
       {/* Floating Action Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed right-6 bottom-6 rounded-full w-16 h-16 bg-[#e0e3e5]/90 backdrop-blur-2xl border border-[#006b2c]/20 shadow-lg shadow-[#006b2c]/10 flex items-center justify-center z-50 hover:scale-110 transition-transform animate-pulse-slow cursor-pointer group"
-        title="AI Assistant"
+        className="fixed right-4 bottom-20 sm:right-6 sm:bottom-6 rounded-full w-14 h-14 sm:w-16 sm:h-16 bg-[#e0e3e5]/95 backdrop-blur-2xl border border-[#006b2c]/30 shadow-xl shadow-[#006b2c]/15 flex items-center justify-center z-40 hover:scale-105 active:scale-95 transition-all animate-pulse-slow cursor-pointer group"
+        title="ProductPilot AI Assistant"
+        aria-label="Open AI Assistant"
       >
-        <span className="material-symbols-outlined text-[#006b2c] text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+        <span className="material-symbols-outlined text-[#006b2c] text-2xl sm:text-[32px]" style={{ fontVariationSettings: "'FILL' 1" }}>
           smart_toy
         </span>
-        <div className="absolute right-20 bg-white px-3.5 py-1.5 rounded-xl shadow-xl border border-[#bdcaba]/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap hidden sm:block">
+        <div className="absolute right-18 sm:right-20 bg-white px-3.5 py-1.5 rounded-xl shadow-xl border border-[#bdcaba]/40 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap hidden sm:block">
           <p className="text-xs font-bold text-[#006b2c]">Assistant: Ready to help</p>
         </div>
       </button>
 
       {/* Assistant Modal Window */}
       {isOpen && (
-        <div className="fixed bottom-24 right-6 z-50 w-[92vw] sm:w-[400px] max-h-[580px] bg-white rounded-2xl shadow-2xl border border-[#006b2c]/20 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
+        <div className="fixed bottom-20 sm:bottom-24 right-3 left-3 sm:left-auto sm:right-6 z-50 sm:w-[400px] max-h-[78vh] sm:max-h-[580px] bg-white rounded-3xl shadow-2xl border border-[#006b2c]/20 flex flex-col overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-200">
           {/* Header */}
-          <div className="bg-[#006b2c] text-white p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                <span className="material-symbols-outlined text-white text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+          <div className="bg-[#006b2c] text-white p-3.5 sm:p-4 flex items-center justify-between">
+            <div className="flex items-center gap-2.5 sm:gap-3">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-white/10 flex items-center justify-center shrink-0">
+                <span className="material-symbols-outlined text-white text-xl sm:text-2xl" style={{ fontVariationSettings: "'FILL' 1" }}>
                   smart_toy
                 </span>
               </div>
               <div>
-                <h3 className="font-bold text-sm tracking-tight flex items-center gap-1.5">
+                <h3 className="font-bold text-xs sm:text-sm tracking-tight flex items-center gap-1.5">
                   ProductPilot Assistant
                   <span className="material-symbols-outlined text-xs text-[#7ffc97]">auto_awesome</span>
                 </h3>
-                <p className="text-[11px] text-[#7ffc97] flex items-center gap-1">
+                <p className="text-[10px] sm:text-[11px] text-[#7ffc97] flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-[#7ffc97] animate-pulse" />
                   Natural Language Product Reasoning
                 </p>
@@ -128,7 +129,8 @@ export const AiAssistantFab: React.FC<AiAssistantFabProps> = ({
 
             <button
               onClick={() => setIsOpen(false)}
-              className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors"
+              className="p-1.5 text-white/80 hover:text-white hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
+              aria-label="Close assistant"
             >
               <span className="material-symbols-outlined text-xl">close</span>
             </button>

@@ -189,34 +189,34 @@ export const HomeView: React.FC<HomeViewProps> = ({
             <span>NEXT-GEN DETERMINISTIC AI HARDWARE DISCOVERY</span>
           </div>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.15] text-[#191c1e]">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.18] sm:leading-[1.15] text-[#191c1e]">
             Find the <span className="ai-gradient-text">Right Hardware</span> in Seconds, Not Hours.
           </h1>
 
-          <p className="text-base sm:text-lg text-[#3e4a3d] max-w-2xl mx-auto leading-relaxed font-normal">
+          <p className="text-sm sm:text-lg text-[#3e4a3d] max-w-2xl mx-auto leading-relaxed font-normal">
             Skip through 50 browser tabs and sponsored reviews. State your real-world workflow, budget, and desired features in plain English — our AI orchestrates the rest.
           </p>
 
           {/* AI Search Bar */}
           <form onSubmit={handleSearchSubmit} className="max-w-3xl mx-auto relative group pt-2">
             <div className="absolute -inset-1.5 bg-gradient-to-r from-[#006b2c] via-[#00873a] to-[#6bff8f] rounded-2xl blur-sm opacity-30 group-focus-within:opacity-60 transition duration-500" />
-            <div className="relative glass-card rounded-2xl p-2.5 flex flex-col md:flex-row items-stretch md:items-center gap-2.5 shadow-xl border border-white/60 bg-white/95">
-              <div className="flex-1 flex items-center px-4 gap-3">
-                <span className="material-symbols-outlined text-[#006b2c] text-2xl">search</span>
+            <div className="relative glass-card rounded-2xl p-2 sm:p-2.5 flex flex-col md:flex-row items-stretch md:items-center gap-2 sm:gap-2.5 shadow-xl border border-white/60 bg-white/95">
+              <div className="flex-1 flex items-center px-3 sm:px-4 gap-2.5 sm:gap-3">
+                <span className="material-symbols-outlined text-[#006b2c] text-xl sm:text-2xl">search</span>
                 <input
                   type="text"
                   value={promptText}
                   onChange={(e) => setPromptText(e.target.value)}
                   placeholder="e.g. Quiet ANC headphones for long international flights with 30h battery..."
-                  className="w-full bg-transparent border-none focus:ring-0 text-sm sm:text-base py-3 sm:py-3.5 placeholder:text-[#3e4a3d]/50 text-[#191c1e] outline-none font-medium"
+                  className="w-full bg-transparent border-none focus:ring-0 text-sm sm:text-base py-2.5 sm:py-3.5 placeholder:text-[#3e4a3d]/50 text-[#191c1e] outline-none font-medium"
                 />
               </div>
               <button
                 type="submit"
-                className="bg-[#006b2c] hover:bg-[#00873a] text-white px-8 py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#006b2c]/20 shrink-0 cursor-pointer text-sm"
+                className="bg-[#006b2c] hover:bg-[#00873a] text-white px-6 sm:px-8 py-3 sm:py-3.5 rounded-xl font-bold flex items-center justify-center gap-2 transition-all shadow-md shadow-[#006b2c]/20 shrink-0 cursor-pointer text-xs sm:text-sm active:scale-95"
               >
                 <span>Find Matches</span>
-                <span className="material-symbols-outlined text-lg">rocket_launch</span>
+                <span className="material-symbols-outlined text-base sm:text-lg">rocket_launch</span>
               </button>
             </div>
           </form>
@@ -423,12 +423,12 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
       {/* WHY PRODUCTPILOT AI VS TRADITIONAL SEARCH MATRIX */}
       <section className="max-w-[1440px] mx-auto px-4 sm:px-8">
-        <div className="bg-white rounded-3xl p-8 sm:p-12 border border-[#bdcaba]/30 shadow-xs space-y-8">
+        <div className="bg-white rounded-3xl p-5 sm:p-12 border border-[#bdcaba]/30 shadow-xs space-y-6 sm:space-y-8">
           <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-xs font-bold text-[#006b2c] uppercase tracking-wider">
               REVOLUTIONIZING PRODUCT DISCOVERY
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#191c1e]">
+            <h2 className="text-xl sm:text-3xl font-extrabold text-[#191c1e]">
               Traditional Search vs. ProductPilot AI
             </h2>
             <p className="text-xs sm:text-sm text-[#3e4a3d]">
@@ -436,8 +436,13 @@ export const HomeView: React.FC<HomeViewProps> = ({
             </p>
           </div>
 
+          <div className="sm:hidden flex items-center justify-center gap-1.5 text-xs text-[#006b2c] font-semibold bg-emerald-50/70 py-1.5 px-3 rounded-xl border border-emerald-200/60">
+            <span className="material-symbols-outlined text-base">swipe</span>
+            <span>Swipe horizontally to view full comparison</span>
+          </div>
+
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[600px]">
+            <table className="w-full text-left border-collapse min-w-[560px]">
               <thead>
                 <tr className="border-b border-[#bdcaba]/30 text-xs font-bold uppercase tracking-wider">
                   <th className="py-4 px-4 text-[#3e4a3d] w-1/3">Evaluation Criterion</th>

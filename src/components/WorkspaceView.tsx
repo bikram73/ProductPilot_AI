@@ -50,6 +50,19 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     valueWinner?: string;
   } | null>(null);
   const [savedNotification, setSavedNotification] = useState(false);
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const activeFiltersCount = useMemo(() => {
+    let count = 0;
+    if (filters.category !== 'All') count++;
+    if (filters.brand !== 'All') count++;
+    if (filters.purpose !== 'All' && filters.purpose !== 'Travel & Commuting') count++;
+    if (filters.maxBudget < 2000) count++;
+    if (filters.minRating > 0) count++;
+    if (filters.selectedFeatures.length > 0) count += filters.selectedFeatures.length;
+    if (filters.inStockOnly) count++;
+    return count;
+  }, [filters]);
 
   // Cold Start analysis
   const coldStartAnalysis = useMemo(() => {
@@ -272,7 +285,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+        <div className="flex overflow-x-auto sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-3 pb-2 scrollbar-hide snap-x">
           {sampleProfiles.map((prof) => {
             const isSelected = activeProfileId === prof.id;
             return (
@@ -280,7 +293,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                 key={prof.id}
                 type="button"
                 onClick={() => handleApplyProfile(prof)}
-                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between min-w-[260px] sm:min-w-0 snap-start shrink-0 sm:shrink ${
                   isSelected
                     ? 'bg-[#003915] text-white border-[#7ffc97] shadow-md ring-2 ring-[#006b2c]/30'
                     : 'bg-slate-50/70 hover:bg-emerald-50/50 border-[#bdcaba]/30 text-[#191c1e]'
@@ -421,8 +434,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
       {/* Main Workspace Layout: Left Sidebar + Right Workspace */}
       <div className="flex flex-col md:flex-row gap-8 relative">
         
-        {/* LEFT SIDEBAR: PREFERENCE FORM */}
-        <aside className="w-full md:w-[320px] shrink-0">
+        {/* DESKTOP SIDEBAR: PREFERENCE FORM */}
+        <aside className="hidden md:block w-[320px] shrink-0">
           <div className="glass-card rounded-2xl p-6 sticky top-28 border border-[#bdcaba]/20 space-y-6">
             <div className="flex items-center justify-between border-b border-[#bdcaba]/20 pb-4">
               <h2 className="text-lg font-bold text-[#006b2c] flex items-center gap-2">
@@ -642,8 +655,258 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
           </div>
         </aside>
 
+        {/* MOBILE FILTER MODAL / BOTTOM SHEET */}
+        {mobileFiltersOpen && (
+          <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-end sm:items-center justify-center animate-in fade-in duration-200">
+            <div className="bg-white rounded-t-3xl sm:rounded-3xl w-full max-w-lg max-h-[88vh] flex flex-col overflow-hidden shadow-2xl animate-in slide-in-from-bottom duration-250">
+              {/* Modal Header */}
+              <div className="p-4 border-b border-slate-200 flex items-center justify-between bg-slate-50/80">
+                <div className="flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#006b2c] text-xl">tune</span>
+                  <h3 className="font-bold text-base text-[#191c1e]">
+                    Filters & Refine ({activeFiltersCount})
+                  </h3>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={handleResetFilters}
+                    className="text-xs font-bold text-[#006b2c] hover:underline cursor-pointer px-2 py-1"
+                  >
+                    Reset
+                  </button>
+                  <button
+                    onClick={() => setMobileFiltersOpen(false)}
+                    className="p-1 rounded-full text-slate-500 hover:bg-slate-200 cursor-pointer"
+                    aria-label="Close filters"
+                  >
+                    <span className="material-symbols-outlined text-xl">close</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Body */}
+              <div className="p-5 overflow-y-auto space-y-5 text-xs">
+                {/* Category */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Category
+                  </label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {['All', 'Laptops', 'Headphones', 'Smartphones', 'Wearables', 'Audio', 'Cameras'].map((cat) => (
+                      <button
+                        key={cat}
+                        type="button"
+                        onClick={() => setFilters({ ...filters, category: cat })}
+                        className={`p-2 rounded-xl text-left font-bold transition-all cursor-pointer ${
+                          filters.category === cat
+                            ? 'bg-[#006b2c] text-white shadow-xs'
+                            : 'bg-slate-100 text-[#3e4a3d] hover:bg-slate-200'
+                        }`}
+                      >
+                        {cat}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Brand */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Brand
+                  </label>
+                  <select
+                    value={filters.brand}
+                    onChange={(e) => setFilters({ ...filters, brand: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-medium text-[#191c1e]"
+                  >
+                    <option value="All">All Brands ({availableBrands.length} Available)</option>
+                    {availableBrands.map((b) => (
+                      <option key={b} value={b}>{b}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Purpose */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Primary Purpose
+                  </label>
+                  <select
+                    value={filters.purpose}
+                    onChange={(e) => setFilters({ ...filters, purpose: e.target.value })}
+                    className="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-medium text-[#191c1e]"
+                  >
+                    <option value="All">All Workflows & Use Cases</option>
+                    <option value="Travel & Commuting">Travel & Commuting</option>
+                    <option value="Software Engineering">Software Engineering & Coding</option>
+                    <option value="Creative Production">Creative Production & 4K Video</option>
+                    <option value="Mobility & Student">Mobility & Student</option>
+                    <option value="Fitness & Sport">Fitness & Sport</option>
+                    <option value="Studio & Audiophile">Studio & Audiophile</option>
+                  </select>
+                </div>
+
+                {/* Budget Slider */}
+                <div className="space-y-1.5">
+                  <div className="flex justify-between items-center">
+                    <label className="font-bold text-[#3e4a3d] uppercase tracking-wider">
+                      Max Budget
+                    </label>
+                    <span className="text-xs text-[#006b2c] font-extrabold bg-[#6bff8f]/20 px-2 py-0.5 rounded-md">
+                      ${filters.maxBudget}
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min="50"
+                    max="2500"
+                    step="50"
+                    value={filters.maxBudget}
+                    onChange={(e) => setFilters({ ...filters, maxBudget: Number(e.target.value) })}
+                    className="w-full h-2 bg-[#e0e3e5] rounded-lg appearance-none cursor-pointer accent-[#006b2c]"
+                  />
+                  <div className="flex justify-between text-[10px] text-slate-400 font-semibold">
+                    <span>$50</span>
+                    <span>$1,000</span>
+                    <span>$2,500</span>
+                  </div>
+                </div>
+
+                {/* Required Features */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Required Features
+                  </label>
+                  <div className="flex flex-wrap gap-1.5">
+                    {featureOptions.map((feat) => {
+                      const selected = filters.selectedFeatures.includes(feat);
+                      return (
+                        <button
+                          key={feat}
+                          type="button"
+                          onClick={() => toggleFeature(feat)}
+                          className={`text-xs px-2.5 py-1.5 rounded-xl font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                            selected
+                              ? 'bg-[#006b2c] text-white shadow-xs'
+                              : 'bg-slate-100 text-[#3e4a3d]'
+                          }`}
+                        >
+                          {selected && <span className="material-symbols-outlined text-[12px]">check</span>}
+                          <span>{feat}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Min Rating */}
+                <div className="space-y-1.5">
+                  <label className="font-bold text-[#3e4a3d] uppercase tracking-wider">
+                    Minimum Rating
+                  </label>
+                  <div className="grid grid-cols-4 gap-1.5">
+                    {[0, 3, 4, 4.5].map((rateVal) => (
+                      <button
+                        key={rateVal}
+                        type="button"
+                        onClick={() => setFilters({ ...filters, minRating: rateVal })}
+                        className={`py-2 rounded-xl text-xs font-bold text-center transition-all cursor-pointer ${
+                          filters.minRating === rateVal
+                            ? 'bg-[#006b2c] text-white'
+                            : 'bg-slate-100 text-[#3e4a3d]'
+                        }`}
+                      >
+                        {rateVal === 0 ? 'Any' : `${rateVal}★+`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Stock Toggle */}
+                <div className="pt-2 border-t border-slate-200">
+                  <button
+                    type="button"
+                    onClick={() => setFilters({ ...filters, inStockOnly: !filters.inStockOnly })}
+                    className={`w-full p-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border flex items-center justify-center gap-2 ${
+                      filters.inStockOnly
+                        ? 'bg-[#6bff8f]/30 border-[#006b2c] text-[#006b2c]'
+                        : 'bg-slate-50 border-slate-300 text-[#3e4a3d]'
+                    }`}
+                  >
+                    <span className="material-symbols-outlined text-base">
+                      {filters.inStockOnly ? 'check_circle' : 'radio_button_unchecked'}
+                    </span>
+                    <span>In Stock Only</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* Modal Footer CTA */}
+              <div className="p-4 border-t border-slate-200 bg-slate-50 flex items-center gap-3">
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="flex-1 py-3 bg-[#006b2c] hover:bg-[#00873a] text-white font-bold text-xs rounded-xl shadow-md cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <span>Show {rankedProducts.length} Matches</span>
+                  <span className="material-symbols-outlined text-base">arrow_forward</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* MAIN CONTENT AREA */}
-        <section className="flex-grow space-y-8">
+        <section className="flex-grow space-y-6 sm:space-y-8">
+          
+          {/* Mobile Quick Category Strip */}
+          <div className="md:hidden flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-hide">
+            {['All', 'Laptops', 'Headphones', 'Smartphones', 'Wearables', 'Cameras', 'Audio'].map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setFilters(prev => ({ ...prev, category: cat }))}
+                className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all cursor-pointer ${
+                  filters.category === cat
+                    ? 'bg-[#006b2c] text-white shadow-xs'
+                    : 'bg-white text-[#3e4a3d] border border-[#bdcaba]/40 hover:bg-slate-50'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Mobile Filter & Sort Toolbar */}
+          <div className="md:hidden flex items-center justify-between gap-2 p-2.5 sm:p-3 bg-white rounded-2xl border border-[#bdcaba]/30 shadow-xs">
+            <button
+              onClick={() => setMobileFiltersOpen(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#006b2c]/10 text-[#006b2c] rounded-xl text-xs font-bold border border-[#006b2c]/20 cursor-pointer active:scale-95"
+            >
+              <span className="material-symbols-outlined text-base">tune</span>
+              <span>Filters</span>
+              {activeFiltersCount > 0 && (
+                <span className="px-1.5 py-0.2 bg-[#006b2c] text-white rounded-full text-[10px] font-extrabold">
+                  {activeFiltersCount}
+                </span>
+              )}
+            </button>
+
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-bold text-[#3e4a3d] hidden xs:inline">
+                {rankedProducts.length} items
+              </span>
+              <select
+                value={filters.sortBy || 'match'}
+                onChange={(e) => setFilters({ ...filters, sortBy: e.target.value as any })}
+                className="bg-slate-50 border border-slate-300 rounded-xl px-2.5 py-1.5 text-xs font-medium text-[#191c1e] cursor-pointer"
+              >
+                <option value="match">AI Match</option>
+                <option value="price-asc">Price: Low</option>
+                <option value="price-desc">Price: High</option>
+                <option value="rating-desc">Rating</option>
+              </select>
+            </div>
+          </div>
           
           {/* Natural Language Prompt Box */}
           <div className="glass-card rounded-2xl p-2 ai-glow">
@@ -780,63 +1043,63 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                   className="glass-card rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 group border-slate-200 flex flex-col justify-between"
                 >
                   <div>
-                    <div className="relative h-64 bg-[#eceef0] overflow-hidden flex items-center justify-center p-4">
+                    <div className="relative h-48 sm:h-64 bg-[#eceef0] overflow-hidden flex items-center justify-center p-3 sm:p-4">
                       <img
                         src={product.image}
                         alt={product.name}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 rounded-xl"
                       />
                       {product.badge && (
-                        <div className="absolute top-4 left-4">
-                          <span className="px-3 py-1 bg-[#006b2c] text-white font-semibold text-xs rounded-full shadow-sm uppercase tracking-wider">
+                        <div className="absolute top-3 left-3 sm:top-4 sm:left-4">
+                          <span className="px-2.5 py-0.5 sm:px-3 sm:py-1 bg-[#006b2c] text-white font-semibold text-[10px] sm:text-xs rounded-full shadow-sm uppercase tracking-wider">
                             {product.badge}
                           </span>
                         </div>
                       )}
-                      <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-2 flex flex-col items-center justify-center border border-[#006b2c]/30 shadow-sm">
-                        <span className="text-sm font-extrabold text-[#006b2c]">{displayScore}%</span>
-                        <span className="text-[9px] font-bold uppercase text-[#3e4a3d]">Best Match</span>
+                      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 bg-white/95 backdrop-blur-md rounded-2xl px-2.5 py-1.5 sm:px-3 sm:py-2 flex flex-col items-center justify-center border border-[#006b2c]/30 shadow-sm">
+                        <span className="text-xs sm:text-sm font-extrabold text-[#006b2c]">{displayScore}%</span>
+                        <span className="text-[8px] sm:text-[9px] font-bold uppercase text-[#3e4a3d]">Best Match</span>
                       </div>
                     </div>
 
-                    <div className="p-6">
-                      <div className="flex justify-between items-start mb-3">
+                    <div className="p-4 sm:p-6">
+                      <div className="flex justify-between items-start mb-2.5 sm:mb-3">
                         <div>
-                          <p className="text-xs font-bold text-[#3e4a3d] uppercase tracking-wider mb-1">
+                          <p className="text-[11px] sm:text-xs font-bold text-[#3e4a3d] uppercase tracking-wider mb-0.5 sm:mb-1">
                             {product.brand} • {product.category}
                           </p>
-                          <h4 className="text-lg font-bold text-[#191c1e] leading-tight">
+                          <h4 className="text-base sm:text-lg font-bold text-[#191c1e] leading-tight">
                             {product.name}
                           </h4>
                         </div>
-                        <div className="text-right">
-                          <p className="text-lg text-[#006b2c] font-bold">${product.price.toFixed(2)}</p>
+                        <div className="text-right shrink-0 ml-2">
+                          <p className="text-base sm:text-lg text-[#006b2c] font-bold">${product.price.toFixed(2)}</p>
                           {product.originalPrice && (
                             <p className="text-xs text-[#3e4a3d] line-through">${product.originalPrice.toFixed(2)}</p>
                           )}
                         </div>
                       </div>
 
-                      <div className="flex items-center gap-4 mb-4">
-                        <div className="flex items-center gap-1 px-3 py-1 bg-[#6bff8f]/30 text-[#007432] rounded-lg">
-                          <span className="material-symbols-outlined text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
+                      <div className="flex items-center gap-3 sm:gap-4 mb-3 sm:mb-4">
+                        <div className="flex items-center gap-1 px-2.5 py-0.5 sm:px-3 sm:py-1 bg-[#6bff8f]/30 text-[#007432] rounded-lg">
+                          <span className="material-symbols-outlined text-[15px] sm:text-[16px]" style={{ fontVariationSettings: "'FILL' 1" }}>
                             star
                           </span>
                           <span className="text-xs font-bold">{product.rating}</span>
                         </div>
-                        <div className="text-xs text-[#3e4a3d]">{product.reviewCount || 1200}+ verified reviews</div>
+                        <div className="text-[11px] sm:text-xs text-[#3e4a3d]">{product.reviewCount || 1200}+ verified reviews</div>
                       </div>
 
                       {/* Score breakdown pills */}
                       {product.scoreBreakdown && (
-                        <div className="flex flex-wrap gap-2 mb-3 text-[10px] font-semibold">
-                          <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200">
+                        <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-3 text-[10px] font-semibold">
+                          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200">
                             Budget: {product.scoreBreakdown.budgetScore}%
                           </span>
-                          <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200">
+                          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200">
                             Features: {product.scoreBreakdown.featureScore}%
                           </span>
-                          <span className="px-2.5 py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200">
+                          <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-200">
                             Category: {product.scoreBreakdown.categoryScore}%
                           </span>
                         </div>
@@ -847,20 +1110,20 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         <span className="font-bold text-[#007432] uppercase text-[10px] block">
                           AI Recommendation Rationale
                         </span>
-                        <p className="leading-relaxed">
+                        <p className="leading-relaxed text-xs">
                           {product.aiReason || product.summary}
                         </p>
                       </div>
                     </div>
                   </div>
 
-                  <div className="p-6 pt-0 grid grid-cols-2 gap-3">
+                  <div className="p-4 sm:p-6 pt-0 grid grid-cols-2 gap-2.5 sm:gap-3">
                     <button
                       onClick={() => {
                         onSelectProduct(product.id);
                         onNavigate('product-detail');
                       }}
-                      className="py-3 px-4 border border-[#6e7b6c] rounded-xl text-xs font-bold text-[#191c1e] hover:bg-[#eceef0] transition-colors cursor-pointer flex items-center justify-center gap-1.5"
+                      className="py-2.5 sm:py-3 px-3 sm:px-4 min-h-[44px] border border-[#6e7b6c] rounded-xl text-xs font-bold text-[#191c1e] hover:bg-[#eceef0] active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5"
                     >
                       <span className="material-symbols-outlined text-[16px]">visibility</span>
                       <span>Details</span>
@@ -868,7 +1131,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
                     <button
                       onClick={() => onToggleCompare(product.id)}
-                      className={`py-3 px-4 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      className={`py-2.5 sm:py-3 px-3 sm:px-4 min-h-[44px] rounded-xl text-xs font-bold active:scale-95 transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
                         isCompared
                           ? 'bg-[#00873a] text-white shadow-md shadow-[#00873a]/20'
                           : 'bg-[#006b2c] text-white hover:bg-[#00873a] shadow-sm'

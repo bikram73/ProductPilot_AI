@@ -21,6 +21,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
   const [downloaded, setDownloaded] = useState(false);
   const [showPickerModal, setShowPickerModal] = useState(false);
   const [pickerSearch, setPickerSearch] = useState('');
+  const [mobileView, setMobileView] = useState<'matrix' | 'cards'>('matrix');
 
   const compareProducts = products.filter((p) =>
     selectedCompareIds.includes(p.id)
@@ -81,21 +82,21 @@ export const CompareView: React.FC<CompareViewProps> = ({
     <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-10 pb-24 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {/* Top Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-[#bdcaba]/30 shadow-xs">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-4 sm:p-6 rounded-2xl border border-[#bdcaba]/30 shadow-xs">
         <div>
           <div className="flex items-center gap-2 text-xs font-bold text-[#006b2c] uppercase tracking-widest">
             <span className="material-symbols-outlined text-[18px]">equalizer</span>
             <span>PRODUCT COMPARISON MATRIX</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-[#191c1e] mt-1">
+          <h1 className="text-xl sm:text-3xl font-extrabold text-[#191c1e] mt-1">
             Side-by-Side Feature Trade-off
           </h1>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-3 w-full md:w-auto">
           <button
             onClick={handleExportData}
-            className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all duration-200 cursor-pointer border ${
+            className={`px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer border ${
               downloaded
                 ? 'bg-emerald-100 border-emerald-400 text-emerald-800 ring-2 ring-emerald-300'
                 : 'bg-white hover:bg-emerald-50 border-slate-300 hover:border-[#006b2c] text-[#191c1e] hover:text-[#006b2c] shadow-xs active:scale-95'
@@ -105,15 +106,15 @@ export const CompareView: React.FC<CompareViewProps> = ({
             <span className={`material-symbols-outlined text-[18px] ${downloaded ? 'text-emerald-700 animate-bounce' : 'text-[#006b2c]'}`}>
               {downloaded ? 'check_circle' : 'file_download'}
             </span>
-            <span>{downloaded ? 'Downloaded CSV ✓' : 'Download Matrix (CSV)'}</span>
+            <span>{downloaded ? 'Downloaded ✓' : 'Download Matrix (CSV)'}</span>
           </button>
 
           <button
             onClick={() => setShowPickerModal(true)}
-            className="px-4 py-2.5 bg-[#006b2c] hover:bg-[#00873a] text-white font-bold text-xs rounded-xl shadow-md shadow-[#006b2c]/20 flex items-center gap-2 transition-colors cursor-pointer"
+            className="px-3.5 py-2.5 bg-[#006b2c] hover:bg-[#00873a] text-white font-bold text-xs rounded-xl shadow-md shadow-[#006b2c]/20 flex items-center justify-center gap-2 transition-colors cursor-pointer active:scale-95"
           >
             <span className="material-symbols-outlined text-[18px]">add</span>
-            <span>Add Product ({selectedCompareIds.length} in Matrix)</span>
+            <span>Add Product ({selectedCompareIds.length})</span>
           </button>
         </div>
       </div>
@@ -289,15 +290,115 @@ export const CompareView: React.FC<CompareViewProps> = ({
             </div>
           </div>
 
+          {/* Mobile View Switcher & Gesture Cue */}
+          <div className="md:hidden flex items-center justify-between bg-white p-3 rounded-2xl border border-[#bdcaba]/30 shadow-xs">
+            <div className="flex items-center gap-1.5 text-xs text-[#3e4a3d] font-medium">
+              <span className="material-symbols-outlined text-[#006b2c] text-base">swipe</span>
+              <span>{mobileView === 'matrix' ? 'Swipe specs horizontally' : 'Card overview'}</span>
+            </div>
+            <div className="flex items-center gap-1 bg-slate-100 p-1 rounded-xl text-xs font-bold">
+              <button
+                type="button"
+                onClick={() => setMobileView('matrix')}
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                  mobileView === 'matrix' ? 'bg-white text-[#006b2c] shadow-xs' : 'text-slate-600'
+                }`}
+              >
+                Matrix
+              </button>
+              <button
+                type="button"
+                onClick={() => setMobileView('cards')}
+                className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
+                  mobileView === 'cards' ? 'bg-white text-[#006b2c] shadow-xs' : 'text-slate-600'
+                }`}
+              >
+                Cards
+              </button>
+            </div>
+          </div>
+
+          {/* MOBILE CARDS COMPARISON VIEW */}
+          {mobileView === 'cards' && (
+            <div className="md:hidden space-y-4">
+              {compareProducts.map((product) => (
+                <div key={product.id} className="bg-white rounded-2xl p-4 border border-[#bdcaba]/30 shadow-xs space-y-3.5">
+                  <div className="flex items-start gap-3.5">
+                    <img src={product.image} alt={product.name} className="w-20 h-20 rounded-xl object-cover bg-slate-100 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] font-bold text-[#006b2c] uppercase">{product.brand} • {product.category}</span>
+                        <button
+                          onClick={() => onRemoveFromCompare(product.id)}
+                          className="text-slate-400 hover:text-rose-500 p-1 cursor-pointer"
+                          title="Remove"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                      <h3 className="font-bold text-sm text-[#191c1e] line-clamp-1 mt-0.5">{product.name}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className="text-base font-extrabold text-[#006b2c]">${product.price}</span>
+                        <span className="px-2 py-0.5 bg-emerald-50 text-[#006b2c] rounded-md text-xs font-bold">{product.matchScore}% Match</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 text-xs bg-slate-50 p-2.5 rounded-xl">
+                    <div>
+                      <span className="text-[10px] text-slate-500 uppercase font-bold block">Rating</span>
+                      <span className="font-bold text-slate-900">{product.rating} ★ ({product.reviewCount})</span>
+                    </div>
+                    <div>
+                      <span className="text-[10px] text-slate-500 uppercase font-bold block">Specs</span>
+                      <span className="font-medium text-slate-800 truncate block">{Object.values(product.specs)[0] || 'Flagship Spec'}</span>
+                    </div>
+                  </div>
+
+                  <div className="space-y-1 text-xs">
+                    <span className="text-[10px] font-bold text-[#006b2c] uppercase tracking-wider block">Top Advantages:</span>
+                    <ul className="space-y-1 text-[#3e4a3d]">
+                      {product.pros.slice(0, 2).map((pro, i) => (
+                        <li key={i} className="flex items-start gap-1.5">
+                          <span className="material-symbols-outlined text-xs text-[#006b2c] shrink-0 mt-0.5">check_circle</span>
+                          <span>{pro}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 pt-1">
+                    <button
+                      onClick={() => {
+                        onSelectProduct(product.id);
+                        onNavigate('product-detail');
+                      }}
+                      className="py-2.5 px-3 bg-[#006b2c] text-white rounded-xl text-xs font-bold text-center flex items-center justify-center gap-1 cursor-pointer"
+                    >
+                      <span>Details</span>
+                      <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    </button>
+                    <button
+                      onClick={() => onRemoveFromCompare(product.id)}
+                      className="py-2.5 px-3 border border-slate-200 text-slate-600 hover:text-rose-600 rounded-xl text-xs font-bold text-center cursor-pointer"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* COMPARISON TABLE MATRIX */}
-          <div className="glass-card rounded-2xl border border-[#bdcaba]/30 shadow-xs overflow-hidden">
+          <div className={`glass-card rounded-2xl border border-[#bdcaba]/30 shadow-xs overflow-hidden ${mobileView === 'cards' ? 'hidden md:block' : 'block'}`}>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 
                 {/* Table Header Row */}
                 <thead>
                   <tr className="bg-[#f7f9fb] border-b border-[#bdcaba]/30">
-                    <th className="p-5 text-xs font-bold text-[#3e4a3d] uppercase tracking-wider w-48">
+                    <th className="p-4 sm:p-5 text-xs font-bold text-[#3e4a3d] uppercase tracking-wider w-36 sm:w-48 sticky left-0 bg-[#f7f9fb] z-20 shadow-[2px_0_6px_rgba(0,0,0,0.06)]">
                       Specifications
                     </th>
 
@@ -369,7 +470,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
                   
                   {/* Match Score */}
                   <tr className="bg-[#6bff8f]/10">
-                    <td className="p-4 font-bold text-[#006b2c]">
+                    <td className="p-4 font-bold text-[#006b2c] sticky left-0 bg-[#f0fdf4] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       AI Match Score
                     </td>
                     {compareProducts.map((product) => (
@@ -389,7 +490,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* User Rating */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d]">
+                    <td className="p-4 font-bold text-[#3e4a3d] sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       User Rating
                     </td>
                     {compareProducts.map((product) => (
@@ -406,7 +507,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Category */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d]">
+                    <td className="p-4 font-bold text-[#3e4a3d] sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Category
                     </td>
                     {compareProducts.map((product) => (
@@ -419,7 +520,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Processor / Sensor */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d]">
+                    <td className="p-4 font-bold text-[#3e4a3d] sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Processor / Sensor / Driver
                     </td>
                     {compareProducts.map((product) => (
@@ -432,7 +533,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Memory / Battery */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d]">
+                    <td className="p-4 font-bold text-[#3e4a3d] sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Memory / Battery
                     </td>
                     {compareProducts.map((product) => (
@@ -445,7 +546,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Display / Audio */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d]">
+                    <td className="p-4 font-bold text-[#3e4a3d] sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Display / Audio Tech
                     </td>
                     {compareProducts.map((product) => (
@@ -458,7 +559,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Weight */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d]">
+                    <td className="p-4 font-bold text-[#3e4a3d] sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Weight & Form Factor
                     </td>
                     {compareProducts.map((product) => (
@@ -471,7 +572,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Key Pros */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d] align-top">
+                    <td className="p-4 font-bold text-[#3e4a3d] align-top sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Key Strengths
                     </td>
                     {compareProducts.map((product) => (
@@ -491,7 +592,7 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
                   {/* Key Cons */}
                   <tr>
-                    <td className="p-4 font-bold text-[#3e4a3d] align-top">
+                    <td className="p-4 font-bold text-[#3e4a3d] align-top sticky left-0 bg-[#f7f9fb] z-10 shadow-[2px_0_6px_rgba(0,0,0,0.04)]">
                       Trade-offs
                     </td>
                     {compareProducts.map((product) => (
