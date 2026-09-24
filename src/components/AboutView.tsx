@@ -255,52 +255,76 @@ export const AboutView: React.FC<AboutViewProps> = ({ onNavigate }) => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          <div className="bg-slate-50/80 p-6 rounded-2xl border border-slate-200/80 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold">
+        <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold text-xs mx-auto">
               1
             </div>
-            <h3 className="font-bold text-sm text-slate-900">
-              Prompt Deconstruction
+            <h3 className="font-bold text-xs text-slate-900">
+              User Preferences
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Gemini AI parses user conversational sentences to extract budget limits, target use case, brand affinities, and strict hardware constraints.
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Natural language prompt or 4 preset profiles (No login/DB).
             </p>
           </div>
 
-          <div className="bg-slate-50/80 p-6 rounded-2xl border border-slate-200/80 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold">
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold text-xs mx-auto">
               2
             </div>
-            <h3 className="font-bold text-sm text-slate-900">
-              Vector Normalization
+            <h3 className="font-bold text-xs text-slate-900">
+              Gemini Intent Extraction
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Technical specs like Geekbench scores, weight in grams, battery watt-hours, and nits are normalized across each product category.
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Extracts category, budget, purpose, and required features.
             </p>
           </div>
 
-          <div className="bg-slate-50/80 p-6 rounded-2xl border border-slate-200/80 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold">
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold text-xs mx-auto">
               3
             </div>
-            <h3 className="font-bold text-sm text-slate-900">
-              Deterministic Ranking
+            <h3 className="font-bold text-xs text-slate-900">
+              Content-Based Matching
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Calculates cosine similarity distance and applies constraint penalty rules to assign a verifiable 0-100% Match Score.
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Weighted vector cosine similarity across 60+ catalog items.
             </p>
           </div>
 
-          <div className="bg-slate-50/80 p-6 rounded-2xl border border-slate-200/80 space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold">
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold text-xs mx-auto">
               4
             </div>
-            <h3 className="font-bold text-sm text-slate-900">
-              Explainability Layer
+            <h3 className="font-bold text-xs text-slate-900">
+              Constraint Penalties
             </h3>
-            <p className="text-xs text-slate-600 leading-relaxed">
-              Generates plain-English reason badges ("Why this matched"), highlighting key advantages and honest trade-offs.
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Budget overages & missing key constraints penalize match score.
+            </p>
+          </div>
+
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold text-xs mx-auto">
+              5
+            </div>
+            <h3 className="font-bold text-xs text-slate-900">
+              Ranked Results
+            </h3>
+            <p className="text-[11px] text-slate-600 leading-tight">
+              0-100% deterministic composite score with score breakdowns.
+            </p>
+          </div>
+
+          <div className="bg-slate-50/80 p-5 rounded-2xl border border-slate-200/80 space-y-2 text-center">
+            <div className="w-8 h-8 rounded-xl bg-emerald-100 text-[#006b2c] flex items-center justify-center font-bold text-xs mx-auto">
+              6
+            </div>
+            <h3 className="font-bold text-xs text-slate-900">
+              AI Rationale Guarantee
+            </h3>
+            <p className="text-[11px] text-slate-600 leading-tight">
+              Every item has an attribute-grounded reason and honest trade-offs.
             </p>
           </div>
         </div>

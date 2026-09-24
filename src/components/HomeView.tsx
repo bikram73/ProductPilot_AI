@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavigationPage, Product } from '../types';
+import { sampleProfiles } from '../data/sampleProfiles';
 
 interface HomeViewProps {
   onNavigate: (page: NavigationPage) => void;
@@ -316,31 +317,31 @@ export const HomeView: React.FC<HomeViewProps> = ({
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-          {sampleWorkflows.map((wf, idx) => (
+          {sampleProfiles.map((prof) => (
             <div
-              key={idx}
-              onClick={() => handleChipClick(wf.prompt)}
+              key={prof.id}
+              onClick={() => handleChipClick(prof.suggestedPrompt)}
               className="bg-white rounded-2xl p-6 border border-[#bdcaba]/30 hover:border-[#006b2c] shadow-xs hover:shadow-lg transition-all duration-300 cursor-pointer flex flex-col justify-between group"
             >
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
                   <div className="w-10 h-10 rounded-xl bg-[#006b2c]/10 text-[#006b2c] flex items-center justify-center group-hover:bg-[#006b2c] group-hover:text-white transition-colors">
-                    <span className="material-symbols-outlined text-xl">{wf.icon}</span>
+                    <span className="material-symbols-outlined text-xl">{prof.avatar}</span>
                   </div>
                   <span className="text-[10px] font-extrabold uppercase px-2 py-0.5 rounded-full bg-emerald-50 text-[#006b2c] border border-emerald-200">
-                    {wf.tag}
+                    ${prof.budget} Budget
                   </span>
                 </div>
                 <h3 className="font-bold text-base text-[#191c1e] group-hover:text-[#006b2c] transition-colors">
-                  {wf.title}
+                  {prof.roleTitle} — {prof.name}
                 </h3>
                 <p className="text-xs text-[#3e4a3d] line-clamp-3 leading-relaxed">
-                  "{wf.prompt}"
+                  "{prof.suggestedPrompt}"
                 </p>
               </div>
 
               <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between text-xs font-bold text-[#006b2c]">
-                <span>Run AI Match</span>
+                <span>{prof.category} • Load Profile</span>
                 <span className="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span>
               </div>
             </div>

@@ -58,6 +58,19 @@ export interface FilterState {
   inStockOnly?: boolean;
 }
 
+export interface SampleProfile {
+  id: string;
+  name: string;
+  avatar: string;
+  roleTitle: string;
+  budget: number;
+  category: string;
+  purpose: string;
+  priorities: string[];
+  description: string;
+  suggestedPrompt: string;
+}
+
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'ai';

@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { FilterState, Product, NavigationPage } from '../types';
-import { rankProducts, ExtractedPreferences, ScoredProduct } from '../recommendation/scoring';
+import { FilterState, Product, NavigationPage, SampleProfile } from '../types';
+import { rankProducts, ExtractedPreferences, ScoredProduct, detectMissingPreferences } from '../recommendation/scoring';
+import { sampleProfiles } from '../data/sampleProfiles';
 
 interface WorkspaceViewProps {
   products: Product[];
@@ -26,15 +27,19 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     category: 'All',
     brand: 'All',
     purpose: 'Travel & Commuting',
-    minRating: 4,
+    minRating: 0,
     selectedFeatures: [],
-    searchPrompt: currentPrompt || ''
+    searchPrompt: currentPrompt || '',
+    sortBy: 'match',
+    inStockOnly: false
   });
 
   const [promptText, setPromptText] = useState(
     currentPrompt || 'I need noise-cancelling headphones under $250 for long flights with 20h+ battery life'
   );
 
+  const [activeProfileId, setActiveProfileId] = useState<string | null>(null);
+  const [showColdStartWizard, setShowColdStartWizard] = useState(false);
   const [extractedIntent, setExtractedIntent] = useState<ExtractedPreferences | null>(null);
   const [isExtracting, setIsExtracting] = useState(false);
   const [coldStartQuestions, setColdStartQuestions] = useState<string[]>([]);
@@ -45,6 +50,11 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     valueWinner?: string;
   } | null>(null);
   const [savedNotification, setSavedNotification] = useState(false);
+
+  // Cold Start analysis
+  const coldStartAnalysis = useMemo(() => {
+    return detectMissingPreferences(promptText, filters);
+  }, [promptText, filters]);
 
   // Extract preferences via AI whenever prompt is updated
   const handleRunAiExtraction = async (queryToExtract: string) => {
@@ -68,7 +78,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
         }
 
         // Check cold start condition (insufficient query detail)
-        if (queryToExtract.trim().split(/\s+/).length < 3) {
+        if (queryToExtract.trim().split(/\s+/).length < 4) {
           const coldRes = await fetch('/api/gemini/cold-start', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -89,9 +99,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
 
   useEffect(() => {
     if (currentPrompt) {
+      setPromptText(currentPrompt);
       handleRunAiExtraction(currentPrompt);
-    } else {
-      handleRunAiExtraction(promptText);
     }
   }, [currentPrompt]);
 
@@ -102,8 +111,8 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
       if (item.price > filters.maxBudget) return false;
       if (filters.category !== 'All' && item.category !== filters.category) return false;
       if (filters.brand !== 'All' && item.brand !== filters.brand) return false;
-      if (item.rating < filters.minRating) return false;
       if (filters.inStockOnly && !item.inStock) return false;
+      if (filters.minRating > 0 && item.rating < filters.minRating) return false;
       return true;
     });
 
@@ -121,53 +130,66 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   }, [products, filters, extractedIntent]);
 
   const lastAdviceFetchRef = React.useRef<string>('');
-  const adviceTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch buying advice only when top products or query truly changes, debounced
+  // Fetch contextual buying advice
   useEffect(() => {
-    if (rankedProducts.length > 0) {
-      const top3 = rankedProducts.slice(0, 3);
-      const signature = `${promptText}_${top3.map(p => p.id).join('-')}`;
-      
-      if (lastAdviceFetchRef.current === signature) {
-        return;
-      }
+    const fetchAdvice = async () => {
+      if (rankedProducts.length === 0) return;
+      const topIds = rankedProducts.slice(0, 3).map((p) => p.id).join(',');
+      if (topIds === lastAdviceFetchRef.current) return;
+      lastAdviceFetchRef.current = topIds;
 
-      if (adviceTimeoutRef.current) {
-        clearTimeout(adviceTimeoutRef.current);
-      }
-
-      adviceTimeoutRef.current = setTimeout(() => {
-        lastAdviceFetchRef.current = signature;
-        fetch('/api/gemini/explain-recommendations', {
+      try {
+        const topProducts = rankedProducts.slice(0, 3);
+        const res = await fetch('/api/gemini/explain-recommendations', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            userQuery: promptText,
-            preferences: extractedIntent,
-            topProducts: top3
+            products: topProducts,
+            userQuery: promptText || 'General search'
           })
-        })
-          .then(res => res.json())
-          .then(data => {
-            if (data && !data.error) {
-              setBuyingAdvice(data);
-            }
-          })
-          .catch(() => {
-            // Silently fallback without crashing
+        });
+        const data = await res.json();
+        if (data && !data.error) {
+          setBuyingAdvice({
+            summary: data.summary,
+            buyingTips: data.buyingTips,
+            thingsToConsider: data.thingsToConsider,
+            valueWinner: data.valueWinner
           });
-      }, 600);
-    }
-
-    return () => {
-      if (adviceTimeoutRef.current) {
-        clearTimeout(adviceTimeoutRef.current);
+        }
+      } catch (err) {
+        console.error('Error fetching buying advice:', err);
       }
     };
-  }, [rankedProducts, promptText, extractedIntent]);
+
+    const timer = setTimeout(() => {
+      fetchAdvice();
+    }, 600);
+
+    return () => clearTimeout(timer);
+  }, [rankedProducts, promptText]);
+
+  const handleApplyProfile = (profile: SampleProfile) => {
+    setActiveProfileId(profile.id);
+    setPromptText(profile.suggestedPrompt);
+    setFilters({
+      maxBudget: profile.budget,
+      category: profile.category,
+      brand: 'All',
+      purpose: profile.purpose,
+      minRating: 0,
+      selectedFeatures: profile.priorities,
+      searchPrompt: profile.suggestedPrompt,
+      sortBy: 'match',
+      inStockOnly: false
+    });
+    onSearchPrompt(profile.suggestedPrompt);
+    handleRunAiExtraction(profile.suggestedPrompt);
+  };
 
   const handleResetFilters = () => {
+    setActiveProfileId(null);
     setFilters({
       maxBudget: 2500,
       category: 'All',
@@ -180,6 +202,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
       inStockOnly: false
     });
     setExtractedIntent(null);
+    setPromptText('');
   };
 
   const toggleFeature = (featureName: string) => {
@@ -227,11 +250,171 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
   ];
 
   return (
-    <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-8 pb-32">
+    <div className="max-w-[1440px] mx-auto px-4 sm:px-8 py-8 space-y-8 pb-32 font-['Plus_Jakarta_Sans',sans-serif]">
       
       {savedNotification && (
         <div className="bg-[#006b2c] text-white p-3 rounded-2xl text-xs font-bold text-center shadow-lg animate-in fade-in">
-          ✓ Recommendation Path saved to your ProductPilot AI profile!
+          ✓ Recommendation Path saved to your ProductPilot session!
+        </div>
+      )}
+
+      {/* SAMPLE PROFILES SELECTOR BAR (REQ-07 & TC-016) */}
+      <div className="bg-white rounded-2xl p-5 border border-[#bdcaba]/30 shadow-xs space-y-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="material-symbols-outlined text-[#006b2c] text-xl">group</span>
+            <span className="text-xs font-extrabold uppercase tracking-wider text-[#191c1e]">
+              Sample User Profiles (Preset Test Scenarios)
+            </span>
+          </div>
+          <span className="text-[11px] text-[#3e4a3d]">
+            Click any profile to instantly load its structured preferences and test recommendation scoring.
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+          {sampleProfiles.map((prof) => {
+            const isSelected = activeProfileId === prof.id;
+            return (
+              <button
+                key={prof.id}
+                type="button"
+                onClick={() => handleApplyProfile(prof)}
+                className={`p-3.5 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between ${
+                  isSelected
+                    ? 'bg-[#003915] text-white border-[#7ffc97] shadow-md ring-2 ring-[#006b2c]/30'
+                    : 'bg-slate-50/70 hover:bg-emerald-50/50 border-[#bdcaba]/30 text-[#191c1e]'
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2">
+                      <span className={`material-symbols-outlined text-base ${isSelected ? 'text-[#7ffc97]' : 'text-[#006b2c]'}`}>
+                        {prof.avatar}
+                      </span>
+                      <span className="text-xs font-extrabold">{prof.roleTitle}</span>
+                    </div>
+                    <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-md ${
+                      isSelected ? 'bg-[#7ffc97] text-[#003915]' : 'bg-emerald-100 text-emerald-800'
+                    }`}>
+                      ${prof.budget} Cap
+                    </span>
+                  </div>
+                  <p className={`text-[11px] leading-relaxed line-clamp-2 ${isSelected ? 'text-white/80' : 'text-[#3e4a3d]'}`}>
+                    {prof.description}
+                  </p>
+                </div>
+
+                <div className={`mt-2 pt-2 border-t text-[10px] font-bold flex items-center justify-between ${
+                  isSelected ? 'border-white/20 text-[#7ffc97]' : 'border-slate-200 text-[#006b2c]'
+                }`}>
+                  <span>{prof.category} • {prof.priorities[0]}</span>
+                  <span>{isSelected ? 'Active ✓' : 'Load →'}</span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* COLD START GUIDED SETUP WIZARD (REQ-06 & Change 3) */}
+      {(coldStartAnalysis.isColdStart || showColdStartWizard) && (
+        <div className="bg-emerald-50/80 border border-emerald-300 rounded-2xl p-6 space-y-4 animate-in fade-in shadow-xs">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#006b2c] text-xl">help_center</span>
+              <h3 className="text-sm font-extrabold text-[#003915] uppercase tracking-wider">
+                New to ProductPilot? Guided Preference Setup
+              </h3>
+            </div>
+            <button
+              onClick={() => setShowColdStartWizard(false)}
+              className="text-xs font-bold text-[#006b2c] hover:underline cursor-pointer"
+            >
+              Dismiss
+            </button>
+          </div>
+
+          <p className="text-xs text-[#3e4a3d] leading-relaxed">
+            Tell us what you need in 4 quick clicks — no login or database account required:
+          </p>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 pt-1">
+            {/* 1. Category */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-[#3e4a3d] uppercase block">1. Product Category</span>
+              <div className="flex flex-wrap gap-1.5">
+                {['Laptops', 'Headphones', 'Smartphones', 'Wearables', 'Cameras'].map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setFilters(prev => ({ ...prev, category: cat }));
+                      setPromptText(prev => `${cat} ${prev}`);
+                    }}
+                    className={`text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                      filters.category === cat ? 'bg-[#006b2c] text-white' : 'bg-white border border-[#bdcaba]/40 text-[#191c1e] hover:bg-emerald-50'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 2. Budget */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-[#3e4a3d] uppercase block">2. Max Budget</span>
+              <div className="flex flex-wrap gap-1.5">
+                {[300, 800, 1200, 2000].map((b) => (
+                  <button
+                    key={b}
+                    onClick={() => setFilters(prev => ({ ...prev, maxBudget: b }))}
+                    className={`text-xs px-2.5 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                      filters.maxBudget === b ? 'bg-[#006b2c] text-white' : 'bg-white border border-[#bdcaba]/40 text-[#191c1e] hover:bg-emerald-50'
+                    }`}
+                  >
+                    &lt; ${b}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 3. Purpose */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-[#3e4a3d] uppercase block">3. Main Purpose</span>
+              <div className="flex flex-wrap gap-1.5">
+                {['Travel & Commuting', 'Software Engineering', 'Creative Production', 'Fitness & Sport'].map((p) => (
+                  <button
+                    key={p}
+                    onClick={() => setFilters(prev => ({ ...prev, purpose: p }))}
+                    className={`text-[11px] px-2 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                      filters.purpose === p ? 'bg-[#006b2c] text-white' : 'bg-white border border-[#bdcaba]/40 text-[#191c1e] hover:bg-emerald-50'
+                    }`}
+                  >
+                    {p.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* 4. Priority */}
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold text-[#3e4a3d] uppercase block">4. Top Priority</span>
+              <div className="flex flex-wrap gap-1.5">
+                {['20h+ Battery', 'Noise Cancellation (ANC)', 'Lightweight & Portable', 'OLED / 4K Display'].map((f) => (
+                  <button
+                    key={f}
+                    onClick={() => toggleFeature(f)}
+                    className={`text-[11px] px-2 py-1 rounded-lg font-bold transition-all cursor-pointer ${
+                      filters.selectedFeatures.includes(f) ? 'bg-[#006b2c] text-white' : 'bg-white border border-[#bdcaba]/40 text-[#191c1e] hover:bg-emerald-50'
+                    }`}
+                  >
+                    {f.split(' ')[0]}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
@@ -497,7 +680,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               </h3>
               <div className="flex-grow border-t border-[#006b2c]/10 mx-2" />
               <span className="text-[11px] text-[#006b2c]/70 font-semibold tracking-wider uppercase">
-                Weighted Content Scoring
+                Transparent preference-based ranking
               </span>
             </div>
 
@@ -612,7 +795,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                       )}
                       <div className="absolute top-4 right-4 bg-white/95 backdrop-blur-md rounded-2xl px-3 py-2 flex flex-col items-center justify-center border border-[#006b2c]/30 shadow-sm">
                         <span className="text-sm font-extrabold text-[#006b2c]">{displayScore}%</span>
-                        <span className="text-[9px] font-bold uppercase text-[#3e4a3d]">AI Match</span>
+                        <span className="text-[9px] font-bold uppercase text-[#3e4a3d]">Best Match</span>
                       </div>
                     </div>
 
@@ -659,9 +842,14 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                         </div>
                       )}
 
-                      <div className="p-3 bg-[#6bff8f]/10 border border-[#006e2f]/10 rounded-xl mb-4 text-xs text-[#3e4a3d]">
-                        <span className="font-bold text-[#007432] uppercase text-[10px] block mb-1">AI Personal Reasoning</span>
-                        <p>{product.aiReason || product.summary}</p>
+                      {/* RATIONALE GUARANTEE (REQ-04 & Change 5) */}
+                      <div className="p-3 bg-[#6bff8f]/10 border border-[#006e2f]/10 rounded-xl mb-4 text-xs text-[#3e4a3d] space-y-1">
+                        <span className="font-bold text-[#007432] uppercase text-[10px] block">
+                          AI Recommendation Rationale
+                        </span>
+                        <p className="leading-relaxed">
+                          {product.aiReason || product.summary}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -704,9 +892,9 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
                   sync
                 </span>
               </div>
-              <h4 className="font-bold text-base text-[#191c1e]">Discovering more...</h4>
+              <h4 className="font-bold text-base text-[#191c1e]">Live Catalog Synced</h4>
               <p className="text-xs text-[#3e4a3d] mt-2 max-w-[220px] leading-relaxed">
-                AI is currently scanning additional retailers for better prices and live stock.
+                Deterministic scoring evaluated across 60+ verified catalog devices.
               </p>
             </div>
           </div>
@@ -721,7 +909,7 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
               <div className="w-[1px] h-8 bg-[#bdcaba]/40 hidden sm:block" />
               <div className="flex flex-col">
                 <span className="text-[10px] text-[#3e4a3d] uppercase font-bold">Selected to Compare</span>
-                <span className="text-sm font-bold text-[#191c1e]">{selectedCompareIds.length} of 4 items</span>
+                <span className="text-sm font-bold text-[#191c1e]">{selectedCompareIds.length} items</span>
               </div>
             </div>
 
@@ -747,4 +935,3 @@ export const WorkspaceView: React.FC<WorkspaceViewProps> = ({
     </div>
   );
 };
-
