@@ -87,7 +87,15 @@ export default function App() {
       'product-detail': selectedProduct ? `${selectedProduct.name} | ProductPilot AI` : 'ProductPilot AI',
       about: 'ProductPilot AI | About & Methodology'
     };
-    document.title = titles[currentPage] || 'ProductPilot AI';
+    const title = titles[currentPage] || 'ProductPilot AI';
+    document.title = title;
+    try {
+      if (window.parent && window.parent !== window) {
+        window.parent.document.title = title;
+      }
+    } catch {
+      // Ignored for sandboxed cross-origin frames
+    }
   }, [currentPage, selectedCompareIds.length, selectedProduct]);
 
   return (
