@@ -18,9 +18,51 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Logo */}
         <button
           onClick={() => onNavigate('home')}
-          className="text-2xl font-bold text-[#006b2c] tracking-tighter hover:opacity-90 transition-opacity focus:outline-none flex items-center gap-2"
+          className="hover:opacity-95 transition-all focus:outline-none flex items-center gap-3 group cursor-pointer text-left"
+          title="ProductPilot AI - Home"
         >
-          <span>ProductPilot AI</span>
+          {/* Project Logo Icon on Left */}
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#006b2c] via-[#005221] to-[#003915] p-2 flex items-center justify-center shadow-md shadow-[#006b2c]/20 border border-[#7ffc97]/40 shrink-0 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-[#006b2c]/30 transition-all duration-300">
+            <svg
+              viewBox="0 0 32 32"
+              fill="none"
+              className="w-6 h-6"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
+              <defs>
+                <linearGradient id="pilotLogoGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#7ffc97" />
+                  <stop offset="0.55" stopColor="#ffffff" />
+                  <stop offset="1" stopColor="#bdcaba" />
+                </linearGradient>
+              </defs>
+              {/* Modern Pilot Navigation Arrow / Compass Dart */}
+              <path
+                d="M16 3L27 25L16 20.5L5 25L16 3Z"
+                fill="url(#pilotLogoGrad)"
+              />
+              <path
+                d="M16 3V20.5"
+                stroke="#003915"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+              />
+              {/* Center navigation hub */}
+              <circle cx="16" cy="11" r="1.75" fill="#003915" />
+              {/* AI Sparkle Node */}
+              <path
+                d="M24 3L25 6L28 7L25 8L24 11L23 8L20 7L23 6L24 3Z"
+                fill="#7ffc97"
+              />
+            </svg>
+          </div>
+
+          {/* Brand Name */}
+          <span className="text-xl sm:text-2xl font-black tracking-tight text-[#191c1e] flex items-center">
+            <span>ProductPilot</span>
+            <span className="text-[#006b2c] ml-1.5 font-extrabold bg-[#6bff8f]/25 px-1.5 py-0.5 rounded-md text-sm sm:text-base border border-[#006b2c]/20">AI</span>
+          </span>
         </button>
 
         {/* Desktop Nav Links */}

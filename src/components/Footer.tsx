@@ -21,9 +21,33 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="sm:col-span-2 space-y-4">
             <div
               onClick={() => onNavigate('home')}
-              className="text-2xl font-extrabold text-[#006b2c] cursor-pointer hover:opacity-90 inline-block transition-opacity"
+              className="cursor-pointer hover:opacity-95 inline-flex items-center gap-3 transition-opacity group"
             >
-              ProductPilot AI
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#006b2c] via-[#005221] to-[#003915] p-2 flex items-center justify-center shadow-sm shadow-[#006b2c]/20 border border-[#7ffc97]/40 shrink-0 group-hover:scale-105 transition-transform duration-200">
+                <svg
+                  viewBox="0 0 32 32"
+                  fill="none"
+                  className="w-5 h-5"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <defs>
+                    <linearGradient id="footerLogoGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+                      <stop stopColor="#7ffc97" />
+                      <stop offset="0.55" stopColor="#ffffff" />
+                      <stop offset="1" stopColor="#bdcaba" />
+                    </linearGradient>
+                  </defs>
+                  <path d="M16 3L27 25L16 20.5L5 25L16 3Z" fill="url(#footerLogoGrad)" />
+                  <path d="M16 3V20.5" stroke="#003915" strokeWidth="1.6" strokeLinecap="round" />
+                  <circle cx="16" cy="11" r="1.75" fill="#003915" />
+                  <path d="M24 3L25 6L28 7L25 8L24 11L23 8L20 7L23 6L24 3Z" fill="#7ffc97" />
+                </svg>
+              </div>
+              <span className="text-xl sm:text-2xl font-black tracking-tight text-[#191c1e] flex items-center">
+                <span>ProductPilot</span>
+                <span className="text-[#006b2c] ml-1.5 font-extrabold bg-[#6bff8f]/25 px-1.5 py-0.5 rounded-md text-sm border border-[#006b2c]/20">AI</span>
+              </span>
             </div>
             <p className="text-[#3e4a3d] max-w-sm leading-relaxed text-xs sm:text-sm">
               Empowering smart consumer choices through deterministic AI orchestration, semantic vector scoring, and zero-bias hardware discovery.
