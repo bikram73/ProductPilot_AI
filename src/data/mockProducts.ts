@@ -1266,38 +1266,39 @@ export const mockProducts: Product[] = [
 
   // --- Additional Smartphones ---
   {
-    id: 'pixel-8-pro',
-    name: 'Google Pixel 8 Pro',
-    brand: 'Google Pixel',
+    id: 'samsung-galaxy-z-flip-5',
+    name: 'Samsung Galaxy Z Flip 5 Foldable',
+    brand: 'Samsung',
     category: 'Smartphones',
-    price: 799,
+    price: 999,
     originalPrice: 999,
-    matchScore: 96,
-    badge: 'AI COMPUTATIONAL',
+    matchScore: 94,
+    badge: 'FOLDABLE ICON',
     image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80'
     ],
-    rating: 4.8,
-    reviewCount: 2450,
-    summary: 'Flagship Google phone powered by Tensor G3 with 50MP main camera, 5x telephoto zoom, Best Take, Magic Audio Eraser, 2400-nit Super Actua display, and 7 years of OS updates.',
-    aiReason: 'The best smartphone for photography purists, AI features (Circle to Search, Call Screen), and guaranteed software support through 2030.',
+    rating: 4.7,
+    reviewCount: 2150,
+    summary: 'Pocket-sized folding smartphone with expanded 3.4" Flex Window cover screen, zero-gap Flex Hinge, Snapdragon 8 Gen 2 for Galaxy, and hands-free FlexCam mode.',
+    aiReason: 'The premier choice for creators and style-conscious buyers who want compact pocketability combined with hands-free tabletop camera shooting.',
     specs: {
-      'Processor': 'Google Tensor G3 with Titan M2 security chip',
-      'Memory': '12GB LPDDR5X RAM',
-      'Storage': '256GB UFS 3.1',
-      'Display': '6.7" Super Actua OLED (1344 x 2992) 1-120Hz LTPO 2400 nits',
-      'Cameras': '50MP Main (f/1.68) + 48MP Ultrawide (Macro) + 48MP 5x Telephoto (30x Super Res Zoom)',
-      'Battery Life': '5050mAh (30W fast charge + Qi wireless)'
+      'Processor': 'Qualcomm Snapdragon 8 Gen 2 for Galaxy',
+      'Memory': '8GB LPDDR5X RAM',
+      'Storage': '256GB / 512GB UFS 4.0',
+      'Main Display': '6.7" FHD+ Dynamic AMOLED 2X Infinity Flex (1-120Hz)',
+      'Cover Display': '3.4" Super AMOLED Flex Window 60Hz',
+      'Cameras': '12MP Wide Dual Pixel OIS + 12MP Ultra-wide, 10MP Selfie',
+      'Battery': '3700mAh Dual Battery with 25W Fast Charging'
     },
     pros: [
-      'Industry-leading computational photography with natural skin tones and night sight',
-      '7 full years of Android OS and monthly security feature drops',
-      'Ultra-bright 2400-nit OLED display is effortless to read under direct sunlight'
+      '3.4" Flex Window allows replying to texts and taking selfies without unfolding',
+      'Folds completely flat with no hinge gap into any shirt or jeans pocket',
+      'Flex Mode acts as a built-in tripod for hands-free video calls and long exposures'
     ],
     cons: [
-      'Charging speed maxes out at 30W (takes ~75 mins for 0 to 100%)',
-      'Tensor G3 runs warmer than Snapdragon 8 Gen 3 under sustained 3D gaming'
+      '3700mAh battery requires charging before late evening during heavy usage',
+      'No dedicated telephoto optical zoom lens'
     ],
     inStock: true
   },
@@ -1338,186 +1339,183 @@ export const mockProducts: Product[] = [
     inStock: true
   },
   {
-    id: 'oneplus-12',
-    name: 'OnePlus 12 5G',
-    brand: 'OnePlus',
+    id: 'asus-rog-phone-8-pro',
+    name: 'ASUS ROG Phone 8 Pro Gaming Flagship',
+    brand: 'ASUS',
     category: 'Smartphones',
-    price: 799,
-    originalPrice: 899,
-    matchScore: 94,
-    badge: 'SPEED & POWER',
+    price: 1199,
+    originalPrice: 1199,
+    matchScore: 95,
+    badge: 'ULTIMATE GAMING',
     image: 'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=800&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1598327105666-5b89351aff97?auto=format&fit=crop&w=1200&q=80'
     ],
     rating: 4.8,
-    reviewCount: 1420,
-    summary: 'Ultra-fast flagship with Snapdragon 8 Gen 3, 16GB RAM, 5400mAh dual-cell battery, 80W SUPERVOOC charging (0 to 100% in 30 mins), and 4th Gen Hasselblad camera system.',
-    aiReason: 'The undisputed battery and charging champion, delivering two days of battery life and rapid charging without sacrificing display or camera prowess.',
+    reviewCount: 960,
+    summary: 'Extreme mobile gaming titan powered by Snapdragon 8 Gen 3, AniMe Vision customizable mini-LED rear matrix, 165Hz Samsung AMOLED, ultrasonic shoulder triggers, and IP68 water resistance.',
+    aiReason: 'The absolute champion for hardcore mobile gamers, esports competitors, and power users demanding sustained frame rates and gaming ergonomics.',
     specs: {
-      'Processor': 'Qualcomm Snapdragon 8 Gen 3 (4nm TSMC)',
+      'Processor': 'Qualcomm Snapdragon 8 Gen 3 (Active Matrix cooling)',
       'Memory': '16GB LPDDR5X RAM',
       'Storage': '512GB UFS 4.0 Storage',
-      'Display': '6.82" 2K 120Hz ProXDR AMOLED (4500 nits peak brightness)',
-      'Battery & Charging': '5400mAh Battery with 80W Wired + 50W Wireless AIRVOOC (Charger included in box)',
-      'Cameras': '50MP Sony LYT-808 + 64MP 3x Periscope Telephoto + 48MP Ultrawide (Hasselblad Color)'
+      'Display': '6.78" FHD+ 165Hz Samsung E6 Flexible AMOLED (2500 nits peak)',
+      'Controls': 'AirTrigger ultrasonic shoulder triggers with vibration feedback',
+      'Battery & Charging': '5500mAh dual battery with 65W HyperCharge (0-100% in 39 mins)',
+      'Audio': 'Dual front-facing stereo speakers + 3.5mm Hi-Res headphone jack'
     },
     pros: [
-      '80W fast charger included in the box charges the massive 5400mAh battery in 30 minutes',
-      'Blinding 4500-nit peak brightness screen with Aqua Touch (operable in heavy rain)',
-      'Silky smooth OxygenOS performance with 16GB RAM keeping 30+ apps in memory'
+      'AirTrigger ultrasonic shoulder buttons provide console gamepad ergonomics',
+      'Smooth 165Hz display with 720Hz touch sampling rate for instantaneous reaction times',
+      '3.5mm headphone jack with Quad DAC for zero latency gaming audio'
     ],
     cons: [
-      'Curved edge display may not appeal to users who prefer completely flat glass',
-      'IP65 water resistance rating (splash resistant, not full dive submersion)'
+      'Gamer aesthetic and AniMe matrix might not suit formal boardroom environments',
+      'Heavier than standard everyday smartphones (225g)'
     ],
     inStock: true
   },
 
   // --- Additional Wearables & Smartwatches ---
   {
-    id: 'apple-watch-ultra-2',
-    name: 'Apple Watch Ultra 2',
-    brand: 'Apple',
+    id: 'galaxy-watch-6-classic',
+    name: 'Samsung Galaxy Watch 6 Classic',
+    brand: 'Samsung',
     category: 'Wearables',
-    price: 799,
-    originalPrice: 799,
-    matchScore: 98,
-    badge: 'EXTREME ADVENTURE',
+    price: 399,
+    originalPrice: 429,
+    matchScore: 94,
+    badge: 'ROTATING BEZEL',
     image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=800&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=1200&q=80'
     ],
-    rating: 4.9,
-    reviewCount: 2890,
-    summary: 'The most capable Apple Watch with 49mm aerospace titanium case, 3000-nit sapphire crystal display, precision dual-frequency GPS, customizable Action button, and 100m water resistance.',
-    aiReason: 'The ultimate smartwatch for scuba divers (EN13319 certified), trail runners, and outdoor adventurers who require cellular connectivity, safety siren, and rugged durability.',
+    rating: 4.8,
+    reviewCount: 3120,
+    summary: 'Sophisticated stainless steel timepiece with iconic physical rotating navigation bezel, Sapphire Crystal glass, Advanced Sleep Coaching, ECG, and Bioelectrical Impedance (BIA) body composition analysis.',
+    aiReason: 'The best Android smartwatch experience with a timeless analog watch aesthetic and satisfying physical tactile navigation.',
     specs: {
-      'Case Material': '49mm Aerospace-grade Titanium with raised sapphire crystal front',
-      'Display': 'Always-On Retina display (3000 nits peak brightness, 1 nit minimum)',
-      'Battery Life': '36 Hours normal usage (Up to 72 Hours in Low Power Mode)',
-      'Sensors': 'Precision Dual-Frequency GPS (L1/L5), Depth gauge with water temp sensor, ECG, Blood Oxygen, Optical Heart Rate Gen 3, 86dB Emergency Siren',
-      'Water Rating': '100m water resistant, high-speed water sports and recreational dive to 40m'
+      'Case Material': '47mm Stainless Steel with Physical Rotating Bezel',
+      'Display': '1.5" Super AMOLED (480 x 480) Sapphire Crystal',
+      'Sensors': 'BioActive Sensor (Optical Heart Rate + Electrical Heart Signal + BIA Body Composition), Temp Sensor',
+      'Operating System': 'Wear OS 4 powered by Samsung (One UI 5 Watch)',
+      'Durability': '5ATM + IP68 / MIL-STD-810H military certified'
     },
     pros: [
-      'Ultra-bright 3000-nit screen remains crystal-clear in glaring direct sun and underwater',
-      'L1 and L5 dual-frequency GPS provides pinpoint accuracy in dense forest canopies and cities',
-      'Double tap gesture lets you control the watch one-handed without touching the screen'
+      'Mechanical rotating bezel provides effortless and precise UI navigation without blocking the screen',
+      'BioActive sensor measures body fat percentage, skeletal muscle, and body water directly on wrist',
+      'Seamless integration with Samsung Galaxy ecosystem and Google Play Store apps'
     ],
     cons: [
-      '49mm case size is bulky on smaller wrists',
-      'Only pairs with Apple iPhone devices'
+      'Battery lasts 30-40 hours (requires daily charging)',
+      'Blood pressure and ECG features require a paired Samsung Galaxy smartphone'
     ],
     inStock: true
   },
   {
-    id: 'garmin-forerunner-965',
-    name: 'Garmin Forerunner 965',
-    brand: 'Garmin',
+    id: 'oura-ring-gen-3-horizon',
+    name: 'Oura Ring Gen 3 Horizon Smart Ring',
+    brand: 'Oura',
     category: 'Wearables',
-    price: 599,
-    originalPrice: 599,
-    matchScore: 96,
-    badge: 'MARATHON PRO',
-    image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=800&q=80',
+    price: 349,
+    originalPrice: 349,
+    matchScore: 95,
+    badge: 'SCREEN-FREE HEALTH',
+    image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=800&q=80',
     galleryImages: [
-      'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?auto=format&fit=crop&w=1200&q=80'
+      'https://images.unsplash.com/photo-1605100804763-247f67b3557e?auto=format&fit=crop&w=1200&q=80'
     ],
-    rating: 4.9,
-    reviewCount: 1670,
-    summary: 'Premium running and triathlon GPS smartwatch with titanium bezel, brilliant 1.4" AMOLED touchscreen, full-color built-in topo maps, and up to 23 days of smartwatch battery life.',
-    aiReason: 'The gold standard for marathoners, cyclists, and triathletes who demand comprehensive physiological training readiness metrics and offline topographical navigation.',
+    rating: 4.8,
+    reviewCount: 2310,
+    summary: 'Ultra-discreet circular titanium smart ring delivering medical-grade sleep staging, 24/7 heart rate, Daytime Stress Detection, and Readiness scoring with zero screen distractions.',
+    aiReason: 'The ideal health companion for executives and athletes who hate wearing wrist smartwatches to bed but want pinpoint recovery and HRV insights.',
     specs: {
-      'Display': '1.4" AMOLED display (454 x 454 pixels) with Gorilla Glass DX',
-      'Bezel': 'Lightweight Titanium Bezel',
-      'Battery Life': 'Up to 23 Days in Smartwatch mode (Up to 31 Hours in GPS mode)',
-      'Navigation': 'Multi-Band GNSS with SatIQ technology and preloaded Full-Color TopoActive Maps',
-      'Weight': '53g (featherlight for 26.2 mile races)',
-      'Metrics': 'Training Readiness, HRV Status, Running Dynamics on wrist, Wrist-based Running Power'
+      'Material': 'Ultralight Titanium with scratch-resistant PVD coating',
+      'Weight': '4 to 6 grams (featherlight and imperceptible)',
+      'Battery Life': 'Up to 7 Days on a single charge',
+      'Sensors': 'Infrared photoplethysmography (PPG), negative temperature coefficient (NTC) body temp sensors, 3D accelerometer',
+      'Water Resistance': 'Water resistant up to 100 meters (swim and sauna safe)'
     },
     pros: [
-      'Massive 23-day battery life eliminates daily charging anxiety',
-      'Preloaded offline topographical maps with turn-by-turn route navigation',
-      'Training Readiness score combines sleep, HRV, recovery time, and acute training load'
+      'Completely screen-free with zero notifications, buzzes, or sleep interruptions',
+      'Measures biometrics from finger arteries which are significantly more accurate than wrist skin',
+      '7-day battery life and sleek jewelry design matches any outfit or wedding band'
     ],
     cons: [
-      'No built-in microphone for answering voice phone calls directly on the watch',
-      'Garmin Pay supports fewer regional banks than Apple Pay or Google Wallet'
+      'Requires an active Oura monthly membership ($5.99/mo) after 30-day trial for full metrics',
+      'No display to view time or real-time running pace during workouts'
     ],
     inStock: true
   },
 
   // --- Additional Cameras & Creator Tech ---
   {
-    id: 'fujifilm-x-t5',
-    name: 'Fujifilm X-T5 Mirrorless Camera',
-    brand: 'Fujifilm',
+    id: 'canon-eos-r6-mark-ii',
+    name: 'Canon EOS R6 Mark II Mirrorless Camera',
+    brand: 'Canon',
     category: 'Cameras',
-    price: 1699,
-    originalPrice: 1699,
+    price: 1999,
+    originalPrice: 2299,
     matchScore: 97,
-    badge: 'PHOTOGRAPHY PURIST',
+    badge: 'HYBRID MASTER',
     image: 'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=800&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1516035069371-29a1b244cc32?auto=format&fit=crop&w=1200&q=80'
     ],
     rating: 4.9,
-    reviewCount: 1540,
-    summary: 'Classic retro rangefinder-style camera featuring 40.2MP X-Trans CMOS 5 HR sensor, 5-axis 7-stop in-body image stabilization, mechanical dials, and 20 legendary Film Simulation modes.',
-    aiReason: 'The quintessential camera for street, documentary, and portrait photographers wanting straight-out-of-camera JPEG colors and tactile analog shutter/ISO controls.',
+    reviewCount: 1840,
+    summary: 'Full-frame powerhouse featuring 24.2MP CMOS sensor, 40fps electronic burst shooting, 6K oversampled uncropped 4K/60p video, and Dual Pixel CMOS AF II with Deep Learning subject detection.',
+    aiReason: 'The benchmark hybrid camera for wildlife, sports, wedding shooters, and video professionals who cannot afford to miss a single moment.',
     specs: {
-      'Sensor': '40.2MP APS-C X-Trans CMOS 5 HR BSI Sensor',
-      'Stabilization': '5-Axis In-Body Image Stabilization (7.0 stops)',
-      'Video': '6.2K 30p, 4K 60p, 10-bit 4:2:2 internal F-Log2',
-      'Shutter': 'Up to 1/180,000s Electronic Shutter, 15fps Mechanical',
-      'Display': '3.0" 1.84M-Dot 3-Way Tilting Touchscreen LCD',
-      'Card Slots': 'Dual SD UHS-II Slots',
-      'Weight': '557g (Body with battery and memory card)'
+      'Sensor': '24.2MP Full-Frame CMOS Sensor',
+      'Stabilization': 'In-Body Image Stabilizer up to 8.0 stops with coordinated IS lenses',
+      'Video': 'Uncropped 4K 60p (6K oversampled), 6K 60p RAW external via HDMI, Canon Log 3',
+      'Continuous Burst': 'Up to 40fps electronic shutter with AF/AE tracking (12fps mechanical)',
+      'Autofocus': 'Dual Pixel CMOS AF II with AI vehicle, aircraft, animal, and eye detection'
     },
     pros: [
-      '40.2 megapixel sensor delivers medium-format levels of resolve and cropping freedom',
-      '20 film simulations (Classic Chrome, Nostalgic Neg, Acros) produce ready-to-share JPEGs without editing',
-      'Tactile analog top dials for Shutter Speed, ISO, and Exposure Compensation'
+      'Uncropped 6K-oversampled 4K 60p video delivers stunning edge-to-edge sharpness with no crop',
+      'Blazing 40fps silent electronic shooting captures high-speed sports action perfectly',
+      'Class-leading 8-stop image stabilization allows handheld shutter speeds down to 1 second'
     ],
     cons: [
-      'Screen tilts in 3 directions for photography rather than flipping around for vlogging',
-      'Deep AI subject tracking autofocus is slightly behind Sony A7 IV in erratic motion'
+      '24.2MP resolution provides less cropping latitude compared to 45MP+ sensors',
+      'Micro-HDMI port rather than full-sized Type-A HDMI port'
     ],
     inStock: true
   },
   {
-    id: 'dji-pocket-3-creator',
-    name: 'DJI Osmo Pocket 3 Creator Combo',
-    brand: 'DJI',
+    id: 'gopro-hero12-creator',
+    name: 'GoPro HERO12 Black Creator Edition',
+    brand: 'GoPro',
     category: 'Cameras',
-    price: 669,
-    originalPrice: 669,
+    price: 499,
+    originalPrice: 599,
     matchScore: 95,
-    badge: 'CREATOR COMBO',
+    badge: 'ACTION WORKHORSE',
     image: 'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80',
     galleryImages: [
       'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=1200&q=80'
     ],
-    rating: 4.9,
-    reviewCount: 2200,
-    summary: 'Pocket-sized gimbal camera with a 1-inch CMOS sensor, 4K 120fps video, 2-inch rotating OLED touchscreen, ActiveTrack 6.0, 10-bit D-Log M, and DJI Mic 2 wireless transmitter included.',
-    aiReason: 'The absolute best portable video camera for travel vloggers, TikTok creators, and solo filmmakers needing silky smooth mechanical gimbal stabilization.',
+    rating: 4.8,
+    reviewCount: 3100,
+    summary: 'All-in-one content capture powerhouse with 5.3K 60fps HDR video, Emmy-winning HyperSmooth 6.0 stabilization, Volta battery grip with 5+ hours recording, Media Mod, and LED Light Mod.',
+    aiReason: 'The most rugged, waterproof, and complete action filming setup for extreme sports, motorcycle vloggers, and adventure travelers.',
     specs: {
-      'Sensor': '1-inch CMOS Sensor (f/2.0 aperture)',
-      'Video': '4K at up to 120fps, 10-bit D-Log M & HLG color profiles',
-      'Stabilization': '3-Axis Mechanical Gimbal (Zero crop stabilization)',
-      'Screen': '2.0-inch Rotating OLED Touchscreen (Rotates for instant horizontal or vertical filming)',
-      'Audio': '3-mic array with stereo recording + DJI Mic 2 Wireless Transmitter included',
-      'Battery': '1300mAh (charges to 80% in 16 minutes with fast charging)'
+      'Sensor': '1/1.9" Sensor (8:7 full-height aspect ratio for vertical/horizontal export)',
+      'Video': '5.3K 60fps, 4K 120fps, 2.7K 240fps slow-motion with GP-Log & Timecode sync',
+      'Stabilization': 'HyperSmooth 6.0 with 360° Horizon Lock',
+      'Waterproof': 'Rugged and submersible to 33ft (10m) without housing',
+      'Included Rig': 'Volta Battery Grip (4900mAh), Media Mod with directional mic, and Light Mod'
     },
     pros: [
-      '1-inch sensor captures crisp low-light footage with natural background bokeh',
-      'Physical 3-axis mechanical gimbal is vastly superior to electronic software stabilization',
-      'Included DJI Mic 2 transmitter provides studio-quality wireless audio with 32-bit float backup'
+      'HyperSmooth 6.0 with 360-degree Horizon Lock keeps footage rock-steady even if camera rotates upside down',
+      '8:7 sensor allows shooting once and cropping to both 9:16 TikTok and 16:9 YouTube without loss',
+      'Volta battery grip provides over 5 hours of continuous 4K recording time and built-in tripod legs'
     ],
     cons: [
-      'Fixed focal length (20mm equivalent) with no optical zoom',
-      'Not waterproof without an optional diving case accessory'
+      'Low-light performance trails 1-inch sensor cameras like the DJI Pocket 3',
+      'No built-in GPS sensor in HERO12 generation'
     ],
     inStock: true
   },
