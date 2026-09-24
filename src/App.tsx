@@ -79,6 +79,17 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
+  React.useEffect(() => {
+    const titles: Record<NavigationPage, string> = {
+      home: 'ProductPilot AI | Find the Perfect Product with AI',
+      recommendations: 'ProductPilot AI | Product Recommendations',
+      compare: `ProductPilot AI | Comparison Matrix (${selectedCompareIds.length})`,
+      'product-detail': selectedProduct ? `${selectedProduct.name} | ProductPilot AI` : 'ProductPilot AI',
+      about: 'ProductPilot AI | About & Methodology'
+    };
+    document.title = titles[currentPage] || 'ProductPilot AI';
+  }, [currentPage, selectedCompareIds.length, selectedProduct]);
+
   return (
     <div className="min-h-screen flex flex-col bg-slate-50/50 text-slate-900 font-['Plus_Jakarta_Sans',sans-serif]">
       

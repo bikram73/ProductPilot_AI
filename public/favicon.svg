@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <linearGradient id="bgGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stopColor="#006b2c"/>
+      <stop offset="50%" stopColor="#005221"/>
+      <stop offset="100%" stopColor="#003915"/>
+    </linearGradient>
+    <linearGradient id="pilotGrad" x1="4" y1="4" x2="28" y2="28" gradientUnits="userSpaceOnUse">
+      <stop stopColor="#7ffc97"/>
+      <stop offset="0.55" stopColor="#ffffff"/>
+      <stop offset="1" stopColor="#bdcaba"/>
+    </linearGradient>
+  </defs>
+  <!-- App Icon Background matching Navbar button -->
+  <rect width="32" height="32" rx="7" fill="url(#bgGrad)"/>
+  <rect width="32" height="32" rx="7" fill="none" stroke="#7ffc97" stroke-width="1.2" stroke-opacity="0.4"/>
+  <!-- Pilot Jet Shape -->
+  <path d="M16 4.5L25.5 24.5L16 20.5L6.5 24.5L16 4.5Z" fill="url(#pilotGrad)"/>
+  <path d="M16 4.5V20.5" stroke="#003915" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="16" cy="11.5" r="1.5" fill="#003915"/>
+  <!-- Sparkle Accent -->
+  <path d="M23.5 3.5L24.3 6L26.8 6.8L24.3 7.6L23.5 10.1L22.7 7.6L20.2 6.8L22.7 6L23.5 3.5Z" fill="#7ffc97"/>
+</svg>
