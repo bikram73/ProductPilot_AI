@@ -26,9 +26,47 @@ export const CompareView: React.FC<CompareViewProps> = ({
     selectedCompareIds.includes(p.id)
   );
 
-  const handleExportPDF = () => {
+  const handleExportData = () => {
+    const productsToExport = compareProducts.length > 0 ? compareProducts : products.slice(0, 4);
+
+    // Build CSV Content
+    const headers = ['Product Name', 'Brand', 'Category', 'Price ($)', 'Match Score (%)', 'Rating', 'Key Specs', 'Pros', 'Cons', 'AI Rationale'];
+    
+    const rows = productsToExport.map(p => {
+      const specsSummary = Object.entries(p.specs || {})
+        .map(([k, v]) => `${k}: ${v}`)
+        .join(' | ');
+      const prosSummary = (p.pros || []).join('; ');
+      const consSummary = (p.cons || []).join('; ');
+      const cleanReason = (p.aiReason || p.summary || '').replace(/"/g, '""');
+
+      return [
+        `"${p.name.replace(/"/g, '""')}"`,
+        `"${p.brand.replace(/"/g, '""')}"`,
+        `"${p.category}"`,
+        p.price,
+        p.matchScore,
+        p.rating,
+        `"${specsSummary.replace(/"/g, '""')}"`,
+        `"${prosSummary.replace(/"/g, '""')}"`,
+        `"${consSummary.replace(/"/g, '""')}"`,
+        `"${cleanReason}"`
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `productpilot-comparison-matrix-${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+
     setDownloaded(true);
-    setTimeout(() => setDownloaded(false), 3000);
+    setTimeout(() => setDownloaded(false), 4000);
   };
 
   const filteredPickerProducts = products.filter(
@@ -56,11 +94,18 @@ export const CompareView: React.FC<CompareViewProps> = ({
 
         <div className="flex items-center gap-3">
           <button
-            onClick={handleExportPDF}
-            className="px-4 py-2.5 bg-[#eceef0] hover:bg-[#e0e3e5] text-[#191c1e] font-bold text-xs rounded-xl flex items-center gap-2 transition-colors cursor-pointer"
+            onClick={handleExportData}
+            className={`px-4 py-2.5 rounded-xl font-bold text-xs flex items-center gap-2 transition-all duration-200 cursor-pointer border ${
+              downloaded
+                ? 'bg-emerald-100 border-emerald-400 text-emerald-800 ring-2 ring-emerald-300'
+                : 'bg-white hover:bg-emerald-50 border-slate-300 hover:border-[#006b2c] text-[#191c1e] hover:text-[#006b2c] shadow-xs active:scale-95'
+            }`}
+            title="Download full specification matrix as CSV / Spreadsheet"
           >
-            <span className="material-symbols-outlined text-[18px]">download</span>
-            <span>Download Matrix</span>
+            <span className={`material-symbols-outlined text-[18px] ${downloaded ? 'text-emerald-700 animate-bounce' : 'text-[#006b2c]'}`}>
+              {downloaded ? 'check_circle' : 'file_download'}
+            </span>
+            <span>{downloaded ? 'Downloaded CSV ✓' : 'Download Matrix (CSV)'}</span>
           </button>
 
           <button
@@ -74,8 +119,9 @@ export const CompareView: React.FC<CompareViewProps> = ({
       </div>
 
       {downloaded && (
-        <div className="bg-[#006b2c] text-white p-3 rounded-2xl text-xs font-bold text-center shadow-lg animate-in fade-in">
-          ✓ Comparison Matrix PDF generated and ready for offline review!
+        <div className="bg-[#006b2c] text-white p-3.5 rounded-2xl text-xs font-bold text-center shadow-lg animate-in fade-in flex items-center justify-center gap-2">
+          <span className="material-symbols-outlined text-base">download_done</span>
+          <span>Comparison Matrix spreadsheet (.csv) downloaded successfully with specs, ratings, and AI verdicts!</span>
         </div>
       )}
 
